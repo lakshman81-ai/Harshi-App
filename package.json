@@ -1,0 +1,62 @@
+{
+  "name": "studyhub-grade8",
+  "version": "1.1.0",
+  "description": "Grade 8 learning platform with real-time Google Sheets synchronization",
+  "homepage": "https://lakshman81-ai.github.io/HarshiApp",
+  "private": true,
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "canvas-confetti": "^1.9.4",
+    "cheerio": "^1.2.0",
+    "clsx": "^2.1.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "duck-duck-scrape": "^2.2.7",
+    "express": "^5.2.1",
+    "lucide-react": "^0.298.0",
+    "prop-types": "^15.8.1",
+    "puppeteer": "^24.36.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1",
+    "tailwind-merge": "^3.4.0",
+    "xlsx": "^0.18.5",
+    "youtube-transcript": "^1.2.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.23",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19"
+  },
+  "main": "postcss.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

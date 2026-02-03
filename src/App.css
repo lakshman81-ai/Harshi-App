@@ -1,0 +1,11 @@
+.App {
+  min-height: 100vh;
+  background-color: #f9fafb;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .App {
+    background-color: #111827;
+  }
+}
