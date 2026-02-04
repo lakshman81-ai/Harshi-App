@@ -177,7 +177,7 @@ function getSubjectColor(subjectKey) {
 /**
  * Validate loaded data structure
  */
-function validateData(data) {
+export function validateData(data) {
     const requiredKeys = ['SUBJECTS', 'TOPICS', 'QUIZ_QUESTIONS', 'STUDY_CONTENT'];
     const missingKeys = requiredKeys.filter(k => !data[k]);
 

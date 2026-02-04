@@ -242,7 +242,7 @@ export class DataTransformer {
                 id: row.challenge_id || row.id || `dc-${Math.random().toString(36).substr(2, 9)}`,
                 subjectKey: (row.subject_key || row.subject || 'math').toLowerCase(),
                 difficulty: (row.difficulty || 'medium').toLowerCase(),
-                question: questionText || `DEBUG: ${JSON.stringify(row)}`,
+                question: questionText || `Question not available`,
                 options: [
                     { label: 'A', text: row.option_a || row.a },
                     { label: 'B', text: row.option_b || row.b },

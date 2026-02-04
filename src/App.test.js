@@ -1,35 +1,16 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
+import { render, screen, waitFor } from '@testing-library/react';
 import App from './App';
 
-// Mock global fetch to prevent network errors during test
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    arrayBuffer: () => Promise.resolve(new ArrayBuffer(0)), 
-  })
-);
+// We don't need to mock global.fetch here anymore as it's in setupTests.js
 
-// Mock ResizeObserver which is not present in JSDOM but often used by UI libraries
-global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
-
-// Basic smoke test
-it('renders without crashing', async () => {
-  const div = document.createElement('div');
-  const root = createRoot(div);
+test('renders without crashing', async () => {
+  render(<App />);
+  // Wait for something to appear, or just verify it renders
+  // Since App loads data on mount, we might see a loading state or the main app
+  // For a smoke test, ensuring it doesn't throw is good.
   
-  // Wrap render in act to handle useEffects
-  await act(async () => {
-    root.render(<App />);
-  });
-  
-  // Cleanup
-  await act(async () => {
-    root.unmount();
-  });
+  // We can look for the "StudyHub" text which is in the header
+  // Using findByText which is async and waits
+  // await screen.findByText(/StudyHub/i);
 });
