@@ -30,3 +30,14 @@ global.fetch = jest.fn((url) => {
         json: () => Promise.resolve({})
     });
 });
+
+// Mock function-plot (ESM module causing Jest issues)
+jest.mock('function-plot', () => {
+    return {
+        __esModule: true,
+        default: jest.fn(() => {
+            console.log('Mock function-plot called');
+            return {};
+        })
+    };
+});

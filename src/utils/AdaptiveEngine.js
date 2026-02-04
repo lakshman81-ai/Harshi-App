@@ -62,6 +62,13 @@ export const selectQuestions = (pool, masteryScore) => {
         selected.push(q);
     }
 
+    // Trim excess (if Rounding Up caused > TARGET_COUNT)
+    // We prefer keeping the weighted distribution, but if we must trim,
+    // we just take the first N since order is not random yet.
+    // However, to be fair, we should probably trim from the bucket that got rounded up.
+    // For simplicity, just slice.
+    const finalSelection = selected.slice(0, TARGET_COUNT);
+
     // Shuffle the final selection
-    return selected.sort(() => 0.5 - Math.random());
+    return finalSelection.sort(() => 0.5 - Math.random());
 };
