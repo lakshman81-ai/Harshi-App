@@ -1,7 +1,6 @@
 import { BookOpen, FlaskConical, Calculator, Leaf, Trophy, Star, Award, Flame, HelpCircle, CheckCircle2, Target, FileText, Clock, Globe, Lightbulb, AlertTriangle, Database, Cloud, CloudOff, User, Bot, Cat, Dog, Rocket, Crown, Zap, Smile } from 'lucide-react';
 
 export const ICON_MAP = {
-    Zap: Star, // Fallback or mapping
     Calculator, FlaskConical, Leaf, Trophy, Star, Award, Flame,
     HelpCircle, CheckCircle2, Target, BookOpen, FileText, Clock, Globe,
     Lightbulb, AlertTriangle, Database, Cloud, CloudOff, User, Bot, Cat, Dog, Rocket, Crown, Zap, Smile
