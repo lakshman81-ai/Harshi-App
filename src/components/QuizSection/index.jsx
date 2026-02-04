@@ -1,8 +1,10 @@
 import React, { memo, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { HelpCircle, Clock, Lightbulb, ChevronLeft, ChevronRight, Check, X, CheckCircle2, RotateCcw, Filter, Sparkles } from 'lucide-react';
+import { HelpCircle, Clock, Lightbulb, ChevronLeft, ChevronRight, Check, X, CheckCircle2, RotateCcw, Filter, Sparkles, Bot } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundManager } from '../../utils/SoundManager';
+import { explainMisconception } from '../../services/geminiService';
+import { useStudy } from '../../contexts/StudyContext';
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 
@@ -111,7 +113,9 @@ const QuizSection = memo(({
   const [xpEarned, setXpEarned] = useState(null);
   const [difficultyFilter, setDifficultyFilter] = useState('all'); // 'all' | 'easy' | 'medium' | 'hard'
   const [durations, setDurations] = useState({}); // { questionId: seconds }
+  const [aiExplanation, setAiExplanation] = useState({ loading: false, text: null }); // AI Explanation State
   const startTimeRef = useRef(Date.now());
+  const { settings } = useStudy();
 
   // Filter questions by difficulty and mode
   const filteredQuestions = useMemo(() => {
@@ -307,6 +311,22 @@ const QuizSection = memo(({
     setResults(null);
     setScore(null);
     setXpEarned(null);
+    setAiExplanation({ loading: false, text: null });
+  };
+
+  const handleExplain = async () => {
+    if (!currentQuestion) return;
+
+    setAiExplanation({ loading: true, text: null });
+
+    const explanation = await explainMisconception(
+        settings.geminiApiKey,
+        currentQuestion.question,
+        answers[currentQuestion.id],
+        currentQuestion.correctAnswer
+    );
+
+    setAiExplanation({ loading: false, text: explanation });
   };
 
   if (!questions || questions.length === 0) {
@@ -813,6 +833,28 @@ const QuizSection = memo(({
         >
           {currentQuestion.explanation}
         </p>
+
+        {/* AI Explanation Section */}
+        {!isCorrect && (
+            <div className="mb-6">
+                 {aiExplanation.text ? (
+                     <div className={cn("p-4 rounded-xl border-l-4 border-purple-500", darkMode ? "bg-purple-900/20" : "bg-purple-50")}>
+                         <h4 className="font-bold flex items-center gap-2 mb-2 text-purple-600 dark:text-purple-400">
+                             <Bot className="w-5 h-5" /> AI Explanation
+                         </h4>
+                         <p className={cn("text-sm", darkMode ? "text-slate-300" : "text-slate-700")}>{aiExplanation.text}</p>
+                     </div>
+                 ) : (
+                     <button
+                        onClick={handleExplain}
+                        disabled={aiExplanation.loading}
+                        className={cn("text-sm font-medium underline flex items-center gap-1", darkMode ? "text-purple-400" : "text-purple-600")}
+                    >
+                         {aiExplanation.loading ? 'Thinking...' : "Explain Why I'm Wrong 🤖"}
+                     </button>
+                 )}
+            </div>
+        )}
 
         <button
           onClick={handleContinueFromReview}

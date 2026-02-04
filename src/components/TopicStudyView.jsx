@@ -8,6 +8,9 @@ import NotesEditor from './NotesEditor';
 import QuizSection from './QuizSection';
 import HandoutInline from './HandoutInline';
 import MathFormula from './MathFormula';
+import { selectQuestions } from '../utils/AdaptiveEngine';
+import GraphExplorer from './interactive/GraphExplorer';
+import InteractiveSVG from './interactive/InteractiveSVG';
 
 const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) => {
     const { progress, subjects, sections, objectives, keyTerms, studyContent, formulas, quizQuestions, updateProgress, settings } = useStudy();
@@ -28,9 +31,22 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
     // State
     const [activeTab, setActiveTab] = useState('study'); // 'study' | 'quiz' | 'handout'
     const [activeSection, setActiveSection] = useState(0);
+    const [adaptiveQuestions, setAdaptiveQuestions] = useState([]);
 
+    // Track time on page
     useEffect(() => {
+        const startTime = Date.now();
         Logger.action('Navigation', `Started studying topic: ${topic.name}`, { subject: config.name });
+
+        const interval = setInterval(() => {
+            const duration = Math.floor((Date.now() - startTime) / 1000);
+            if (duration > 300) { // Log if user is on the page for > 5 minutes
+                Logger.action('Time on Page', `User spent > 5 mins on ${topic.name}`, { duration });
+                clearInterval(interval); // Log once
+            }
+        }, 60000); // Check every minute
+
+        return () => clearInterval(interval);
     }, [topic.name, config.name]);
 
     useEffect(() => {
@@ -107,16 +123,41 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
         const newTopicStats = { ...progress.topicStats, [topicKey]: updateGranular(progress.topicStats?.[topicKey]) };
         const newSubjectStats = { ...progress.subjectStats, [subject]: updateGranular(progress.subjectStats?.[subject]) };
 
+        // Update Topic Mastery
+        const currentMastery = progress.topicMastery?.[topicKey] || { score: 0, history: [] };
+        // Simple moving average for mastery score update
+        // New Score = (Old Score * 0.7) + (Quiz Score * 0.3)
+        const newMasteryScore = Math.round((currentMastery.score * 0.7) + (score * 0.3));
+
+        const newTopicMastery = {
+            ...(progress.topicMastery || {}),
+            [topicKey]: {
+                score: newMasteryScore,
+                history: [...(currentMastery.history || []), score].slice(-5), // Keep last 5
+                level: newMasteryScore < 30 ? 'easy' : newMasteryScore < 70 ? 'medium' : 'hard'
+            }
+        };
+
         updateProgress({
             xp: progress.xp + earnedXp,
             stats: newGlobalStats,
             dailyStats: newDailyStats,
             topicStats: newTopicStats,
             subjectStats: newSubjectStats,
+            topicMastery: newTopicMastery,
             topics: { [topicKey]: { ...progress.topics[topicKey], quizScore: score, lastAccessed: new Date().toISOString() } }
         });
         setTimeout(() => setXpGain(null), 2000);
     };
+
+    // Initialize adaptive questions when entering quiz tab or quick mode
+    useEffect(() => {
+        if ((activeTab === 'quiz' || quickMode) && topicQuizzes.length > 0) {
+            const masteryScore = progress.topicMastery?.[topicKey]?.score || 0;
+            const selected = selectQuestions([...topicQuizzes], masteryScore);
+            setAdaptiveQuestions(selected);
+        }
+    }, [activeTab, quickMode, topicQuizzes, topicKey, progress.topicMastery]);
 
     const handleUseHint = (cost) => {
         updateProgress({ xp: Math.max(0, progress.xp - cost) });
@@ -356,6 +397,26 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
                                                         </div>
                                                     )}
 
+                                                    {/* Interactive Handouts */}
+                                                    {content.type === 'interactive_graph' && (
+                                                        <div className="mb-8">
+                                                            <GraphExplorer
+                                                                initialFormula={content.interactiveData?.formula || "x^2"}
+                                                                darkMode={darkMode}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {content.type === 'interactive_diagram' && (
+                                                        <div className="mb-8">
+                                                            <InteractiveSVG
+                                                                svgUrl={content.imageUrl || content.interactiveData?.svgUrl}
+                                                                regions={content.interactiveData?.regions || []}
+                                                                darkMode={darkMode}
+                                                            />
+                                                        </div>
+                                                    )}
+
                                                     {/* Content Video */}
                                                     {content.videoUrl && (
                                                         <div className="mb-6">
@@ -586,7 +647,7 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
                         <main className="flex-1 overflow-y-auto p-4 sm:p-8">
                             <div className="max-w-3xl mx-auto">
                                 <QuizSection
-                                    questions={topicQuizzes}
+                                    questions={adaptiveQuestions.length > 0 ? adaptiveQuestions : topicQuizzes}
                                     darkMode={darkMode}
                                     subjectConfig={config}
                                     topicId={topicKey}
@@ -594,7 +655,7 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
                                     hintCost={5}
                                     userXp={progress.xp}
                                     onUseHint={handleUseHint}
-                                    showDifficultyFilter={!quickMode}
+                                    showDifficultyFilter={!quickMode && adaptiveQuestions.length === 0} // Hide filter if adaptive
                                     quickMode={quickMode}
                                     onComplete={(score, earnedXp, results) => {
                                         handleQuizComplete(score, earnedXp, results);

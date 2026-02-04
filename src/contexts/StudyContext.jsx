@@ -26,7 +26,8 @@ const DEFAULT_PROGRESS = {
     },
     dailyStats: {}, // "YYYY-MM-DD": { questions: 0, correct: 0, time: 0 }
     topicStats: {},  // "topicId": { questions: 0, correct: 0, time: 0 }
-    subjectStats: {} // "subjectKey": { questions: 0, correct: 0, time: 0 }
+    subjectStats: {}, // "subjectKey": { questions: 0, correct: 0, time: 0 }
+    topicMastery: {} // { topicId: { score: 0-100, history: [], level: 'easy' } }
 };
 
 const STORAGE_KEY = 'studyhub_v6_data';

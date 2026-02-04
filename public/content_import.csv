@@ -1,0 +1,6 @@
+subject_key,topic_id,section_id,content_type,content_title,content_text,image_url,video_url,order_index,interactive_data
+physics,physics_gravity,sec_intro,introduction,Introduction to Gravity,Gravity is a force of attraction that exists between any two masses, any two bodies, any two particles.,,,,1,
+physics,physics_gravity,sec_visual,interactive_graph,Gravity Graph,,,,,2,"{""formula"": ""9.8 * x""}"
+physics,physics_gravity,sec_diagram,interactive_diagram,Gravity Diagram,,https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Newtonian_gravity.svg/1200px-Newtonian_gravity.svg.png,,3,"{""regions"": [{""id"": ""mass1"", ""x"": 30, ""y"": 50, ""info"": ""Mass 1 exerts force on Mass 2""}, {""id"": ""mass2"", ""x"": 70, ""y"": 50, ""info"": ""Mass 2 exerts equal and opposite force on Mass 1""}]}"
+chemistry,chem_periodic,sec_intro,introduction,The Periodic Table,The periodic table is a tabular display of the chemical elements.,,,,1,
+chemistry,chem_periodic,sec_structure,text,Structure,The table is organized by atomic number, electron configuration, and recurring chemical properties.,,,,2,

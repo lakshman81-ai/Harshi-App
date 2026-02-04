@@ -135,6 +135,15 @@ export class DataTransformer {
                 content[sectionId] = [];
             }
 
+            let interactiveData = null;
+            if (row.interactive_data) {
+                try {
+                    interactiveData = JSON.parse(row.interactive_data);
+                } catch (e) {
+                    console.warn('Failed to parse interactive_data', e);
+                }
+            }
+
             content[sectionId].push({
                 id: row.content_id,
                 type: row.content_type || 'text',
@@ -142,7 +151,8 @@ export class DataTransformer {
                 text: row.content_text || '',
                 orderIndex: parseInt(row.order_index) || 0,
                 imageUrl: row.image_url || '',
-                videoUrl: row.video_url || ''
+                videoUrl: row.video_url || '',
+                interactiveData: interactiveData
             });
         });
 
@@ -211,7 +221,8 @@ export class DataTransformer {
                 ].filter(opt => opt.text),
                 correctAnswer: row.correct_answer?.toUpperCase() || 'A',
                 explanation: row.explanation || '',
-                xpReward: parseInt(row.xp_reward) || 10
+                xpReward: parseInt(row.xp_reward) || 10,
+                difficulty: (row.difficulty || 'medium').toLowerCase()
             });
         });
 

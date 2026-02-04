@@ -1,0 +1,6 @@
+subject_key,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,xp_reward,difficulty,hint
+physics,physics_gravity,What pulls objects towards the Earth?,Magnetism,Gravity,Friction,Tension,B,Gravity is the force that attracts a body toward the center of the earth.,10,easy,Think about what keeps your feet on the ground.
+physics,physics_gravity,If mass increases, what happens to gravitational force?,Decreases,Stays same,Increases,Disappears,C,Gravitational force is directly proportional to mass (F = G*m1*m2 / r^2).,15,medium,Remember the formula for gravity involves mass in the numerator.
+physics,physics_gravity,What is the approximate value of g on Earth?,9.8 m/s^2,10.5 m/s^2,8.9 m/s^2,5.2 m/s^2,A,The standard acceleration due to gravity is approximately 9.8 m/s^2.,10,easy,It is close to 10.
+chemistry,chem_periodic,Which element has the symbol 'O'?,Gold,Osmium,Oxygen,Olive,C,O stands for Oxygen.,10,easy,It is essential for breathing.
+chemistry,chem_periodic,Elements in the same column are called a...,Period,Group,Block,Line,B,Vertical columns are Groups; horizontal rows are Periods.,15,medium,Think of a group of friends standing in a line.

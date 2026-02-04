@@ -1,5 +1,6 @@
 import { GOOGLE_SHEETS_CONFIG } from '../config';
 import { log } from '../utils';
+import { Logger } from './Logger';
 
 class GoogleSheetsService {
     constructor(config) {
@@ -25,7 +26,9 @@ class GoogleSheetsService {
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.error?.message || `HTTP ${response.status}`);
+                const errorMessage = error.error?.message || `HTTP ${response.status}`;
+                Logger.error('API Error', { url, status: response.status, message: errorMessage });
+                throw new Error(errorMessage);
             }
 
             const data = await response.json();
