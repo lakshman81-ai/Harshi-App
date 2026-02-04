@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { HelpCircle, Clock, Lightbulb, ChevronLeft, ChevronRight, Check, X, CheckCircle2, RotateCcw, Filter, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { HelpCircle, Clock, Lightbulb, ChevronLeft, ChevronRight, Check, X, CheckCircle2, RotateCcw, Filter, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundManager } from '../../utils/SoundManager';
 
@@ -249,8 +249,6 @@ const QuizSection = memo(({
         isCorrect,
         hintsUsed: hintsUsed[q.id] || false,
         difficulty: q.difficulty || 'medium',
-        hintsUsed: hintsUsed[q.id] || false,
-        difficulty: q.difficulty || 'medium',
         timeSpent: durations[q.id] || 0
       };
     });
@@ -292,7 +290,7 @@ const QuizSection = memo(({
         origin: { y: 0.6 }
       });
     }
-  }, [filteredQuestions, answers, hintsUsed, onComplete]);
+  }, [filteredQuestions, answers, hintsUsed, onComplete, durations]);
 
   // Keep handleSubmitRef updated to avoid stale closure in timer
   useEffect(() => {

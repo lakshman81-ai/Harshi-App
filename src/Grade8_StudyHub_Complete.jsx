@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import { DataProvider, useData } from './contexts/DataContext';
+import { DataProvider } from './contexts/DataContext';
 import { StudyProvider, useStudy } from './contexts/StudyContext';
 import Dashboard from './components/Dashboard';
 import SubjectOverview from './components/SubjectOverview';
@@ -9,7 +8,6 @@ import SettingsPanel from './components/SettingsPanel';
 import { cn } from './utils';
 
 const AppContent = () => {
-  const { isLoading } = useData();
   const { settings } = useStudy();
   const darkMode = settings.darkMode;
 

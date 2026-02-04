@@ -1,8 +1,9 @@
 import React, { memo, useState } from 'react';
-import { BookOpen, Star, Flame, CheckCircle2, Clock, Sun, Moon, Settings, Trophy } from 'lucide-react';
+import { BookOpen, Star, Flame, CheckCircle2, Clock, Sun, Moon, Settings, Trophy, Terminal } from 'lucide-react';
 import { useStudy } from '../contexts/StudyContext';
 import { useData } from '../contexts/DataContext';
 import { cn } from '../utils';
+import { Logger } from '../services/Logger';
 
 import { ICON_MAP, calculateLevel, countCompletedTopics, formatStudyTime, calculateSubjectProgress, AVATAR_MAP } from '../constants';
 import { SyncStatusBadge, Card, ProgressRing } from './common/UIComponents';
@@ -13,6 +14,7 @@ import AvatarSelector from './common/AvatarSelector';
 
 import DailyChallengeModal from './modals/DailyChallengeModal';
 import QAStatsModal from './modals/QAStatsModal';
+import LogsModal from './modals/LogsModal';
 import { BarChart2 } from 'lucide-react';
 
 const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
@@ -22,6 +24,7 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
     const [showAvatarSelector, setShowAvatarSelector] = useState(false);
     const [showChallengeModal, setShowChallengeModal] = useState(false);
     const [showQAStats, setShowQAStats] = useState(false);
+    const [showLogs, setShowLogs] = useState(false);
 
     const totalXP = progress.xp;
     const level = calculateLevel(totalXP);
@@ -97,6 +100,9 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
                         </button>
                         <button onClick={() => setShowQAStats(true)} className={cn("p-2 rounded-lg", darkMode ? "hover:bg-slate-700 text-slate-300" : "hover:bg-slate-100 text-slate-600")} title="QA Statistics">
                             <BarChart2 className="w-5 h-5" />
+                        </button>
+                        <button onClick={() => setShowLogs(true)} className={cn("p-2 rounded-lg", darkMode ? "hover:bg-slate-700 text-slate-300" : "hover:bg-slate-100 text-slate-600")} title="System Logs">
+                            <Terminal className="w-5 h-5" />
                         </button>
                         <button onClick={onOpenSettings} className={cn("p-2 rounded-lg", darkMode ? "hover:bg-slate-700 text-slate-300" : "hover:bg-slate-100 text-slate-600")}>
                             <Settings className="w-5 h-5" />
@@ -183,7 +189,16 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
                         const subjectProgress = calculateSubjectProgress(key, progress.topics, subject.topics);
 
                         return (
-                            <Card key={key} onClick={() => onSelectSubject(key)} darkMode={darkMode} glowColor={darkMode && subject.darkGlow} className="p-6 text-left group">
+                            <Card
+                                key={key}
+                                onClick={() => {
+                                    Logger.action('Navigation', `Selected Subject: ${subject.name}`);
+                                    onSelectSubject(key);
+                                }}
+                                darkMode={darkMode}
+                                glowColor={darkMode && subject.darkGlow}
+                                className="p-6 text-left group"
+                            >
                                 <div className="flex items-center gap-4">
                                     <div className={cn("w-14 h-14 rounded-xl flex items-center justify-center bg-gradient-to-br", subject.gradient)}>
                                         <IconComponent className="w-7 h-7 text-white" />
@@ -264,6 +279,10 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
 
             {showQAStats && (
                 <QAStatsModal onClose={() => setShowQAStats(false)} darkMode={darkMode} />
+            )}
+
+            {showLogs && (
+                <LogsModal onClose={() => setShowLogs(false)} darkMode={darkMode} />
             )}
         </div>
     );

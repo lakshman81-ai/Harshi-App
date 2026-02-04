@@ -216,7 +216,7 @@ export const StudyProvider = ({ children }) => {
 
             updateProgress({ streak: newStreak, lastStudyDate: today, achievements: newAchievements });
         }
-    }, []);
+    }, [progress.lastStudyDate, progress.streak, progress.achievements, updateProgress]);
 
     const value = {
         progress,
@@ -228,7 +228,6 @@ export const StudyProvider = ({ children }) => {
         studyContent: data?.studyContent || {},
         formulas: data?.formulas || {},
         quizQuestions: data?.quizQuestions || {},
-        achievements: data?.achievements || [],
         achievements: data?.achievements || [],
         dailyChallenges: data?.dailyChallenges || [],
         updateProgress,

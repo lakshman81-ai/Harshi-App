@@ -7,6 +7,7 @@
 import csvService from './csvService';
 import { fetchLocalExcelData } from './excelService';
 import { log } from '../utils';
+import { Logger } from './Logger';
 
 // Configuration: Set data source priority 
 // 'csv-first' = Try CSV first, fallback to Excel
@@ -19,13 +20,27 @@ const DATA_SOURCE_MODE = 'csv-first';
  */
 export async function loadAppData() {
     log('Loading application data...');
+    Logger.info('Starting data load process', { mode: DATA_SOURCE_MODE });
 
     if (DATA_SOURCE_MODE === 'csv-first') {
         try {
-            return await loadFromCSV();
+            const data = await loadFromCSV();
+            validateData(data);
+            Logger.gate('Data Load', true);
+            return data;
         } catch (csvError) {
+            Logger.warn('CSV loading failed, falling back to Excel', csvError);
             log('CSV loading failed, falling back to Excel:', csvError);
-            return await loadFromExcel();
+            try {
+                const excelData = await loadFromExcel();
+                validateData(excelData);
+                Logger.gate('Fallback Data Load', true);
+                return excelData;
+            } catch (excelError) {
+                Logger.gate('Data Load', false);
+                Logger.error('All data loading methods failed', excelError);
+                throw excelError;
+            }
         }
     }
 
@@ -157,6 +172,30 @@ function getSubjectColor(subjectKey) {
         biology: '#059669'
     };
     return colors[subjectKey.toLowerCase()] || '#6B7280';
+}
+
+/**
+ * Validate loaded data structure
+ */
+export function validateData(data) {
+    const requiredKeys = ['SUBJECTS', 'TOPICS', 'QUIZ_QUESTIONS', 'STUDY_CONTENT'];
+    const missingKeys = requiredKeys.filter(k => !data[k]);
+
+    if (missingKeys.length > 0) {
+        const msg = `Data validation failed: Missing keys ${missingKeys.join(', ')}`;
+        Logger.gate('Data Validation', false);
+        throw new Error(msg);
+    }
+
+    // Check if subjects exist
+    if (!data.SUBJECTS || data.SUBJECTS.length === 0) {
+        const msg = 'Data validation failed: No subjects loaded';
+        Logger.gate('Data Validation', false);
+        throw new Error(msg);
+    }
+
+    Logger.gate('Data Validation', true);
+    return true;
 }
 
 const unifiedDataService = {

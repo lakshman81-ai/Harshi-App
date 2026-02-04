@@ -1,5 +1,5 @@
 import React from 'react';
-import { Printer, FileText, Target, BookOpen, GitBranch, Lightbulb, AlertTriangle, Globe, HelpCircle, Variable } from 'lucide-react';
+import { Printer, FileText, BookOpen, GitBranch, Lightbulb, AlertTriangle, Globe, Variable } from 'lucide-react';
 import MathFormula from './MathFormula/index';
 import { cn } from '../utils';
 

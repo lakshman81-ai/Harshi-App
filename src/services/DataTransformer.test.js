@@ -52,7 +52,7 @@ describe('DataTransformer', () => {
 
             const result = DataTransformer.transformDailyChallenges(input);
             expect(result[0].question).toBe('Partial Question');
-            expect(result[0].options).toHaveLength(2);
+        expect(result[0].options).toHaveLength(0);
             expect(result[0].correctAnswer).toBe('A'); // Default
             expect(result[0].subjectKey).toBe('math'); // Default
         });

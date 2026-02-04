@@ -1,7 +1,8 @@
-import React, { memo, useState, useMemo } from 'react';
+import React, { memo, useState, useMemo, useEffect } from 'react';
 import { BookOpen, FileText, HelpCircle, Settings, ChevronLeft, CheckCircle2, Circle, CircleDot, Clock, ChevronRight, Check, Search, X, Hash, Variable } from 'lucide-react';
 import { useStudy } from '../contexts/StudyContext';
 import { cn } from '../utils';
+import { Logger } from '../services/Logger';
 import { ICON_MAP, calculateSubjectProgress } from '../constants';
 import { Card, ProgressRing } from './common/UIComponents';
 
@@ -12,6 +13,10 @@ const SubjectOverview = memo(({ subject, onBack, onSelectTopic, onOpenSettings }
     const [searchQuery, setSearchQuery] = useState('');
 
     const config = subjects[subject];
+
+    useEffect(() => {
+        Logger.action('Navigation', `Viewing Subject Overview: ${config.name}`);
+    }, [config.name]);
     const IconComponent = ICON_MAP[config.icon] || BookOpen;
     const subjectProgress = calculateSubjectProgress(subject, progress.topics, config.topics);
     const completedCount = config.topics.filter(t => progress.topics[t.id]?.progress === 100).length;
@@ -248,7 +253,16 @@ const SubjectOverview = memo(({ subject, onBack, onSelectTopic, onOpenSettings }
                             const originalIndex = config.topics.findIndex(t => t.id === topic.id);
 
                             return (
-                                <Card key={topic.id} onClick={() => onSelectTopic(originalIndex)} darkMode={darkMode} glowColor={darkMode && config.darkGlow} className="p-6 text-left group">
+                                <Card
+                                    key={topic.id}
+                                    onClick={() => {
+                                        Logger.action('Navigation', `Selected Topic: ${topic.name}`);
+                                        onSelectTopic(originalIndex);
+                                    }}
+                                    darkMode={darkMode}
+                                    glowColor={darkMode && config.darkGlow}
+                                    className="p-6 text-left group"
+                                >
                                     <div className="flex items-start gap-4">
                                         <div className={cn(
                                             "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",

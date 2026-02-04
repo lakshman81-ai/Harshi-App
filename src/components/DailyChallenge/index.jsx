@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Calendar, Sparkles, Clock, Star, Check, X, Lightbulb, ChevronRight, Trophy, Zap } from 'lucide-react';
+import { Calendar, Sparkles, Clock, Star, Check, X, Lightbulb, ChevronRight, Trophy } from 'lucide-react';
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Settings, Moon, Volume2, Database, RefreshCw, AlertTriangle, FileSpreadsheet, Key, Eye, EyeOff, Bot, Sparkles, Download, Check, ExternalLink } from 'lucide-react';
+import { X, Settings, Volume2, Database, RefreshCw, AlertTriangle, FileSpreadsheet, Key, Eye, EyeOff, Sparkles, Download, Check } from 'lucide-react';
 import { useStudy } from '../contexts/StudyContext';
 import { useData } from '../contexts/DataContext';
 import { cn } from '../utils';
@@ -8,15 +8,14 @@ import { ContentGenerator } from '../services/ContentGenerator';
 import { ExcelExporter } from '../services/ExcelExporter';
 
 const SettingsPanel = ({ onClose }) => {
-    const { settings, updateSettings, toggleDarkMode } = useStudy();
+    const { settings, updateSettings } = useStudy();
     const {
         dataSource,
         updateDataSource,
         isGoogleSheetsConfigured,
         refresh,
         isRefreshing,
-        lastSync,
-        syncStatus
+        lastSync
     } = useData();
 
     const darkMode = settings.darkMode;

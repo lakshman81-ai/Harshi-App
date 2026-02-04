@@ -1,7 +1,8 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { BookOpen, Star, ChevronLeft, FileText, HelpCircle, ClipboardList, Check, StickyNote, Target, Lightbulb, AlertTriangle, Globe, FlaskConical, ChevronRight, Bookmark, Copy, Clock } from 'lucide-react';
 import { useStudy } from '../contexts/StudyContext';
 import { cn } from '../utils';
+import { Logger } from '../services/Logger';
 import { ICON_MAP } from '../constants';
 import NotesEditor from './NotesEditor';
 import QuizSection from './QuizSection';
@@ -27,6 +28,14 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
     // State
     const [activeTab, setActiveTab] = useState('study'); // 'study' | 'quiz' | 'handout'
     const [activeSection, setActiveSection] = useState(0);
+
+    useEffect(() => {
+        Logger.action('Navigation', `Started studying topic: ${topic.name}`, { subject: config.name });
+    }, [topic.name, config.name]);
+
+    useEffect(() => {
+        Logger.info(`Switched to tab: ${activeTab}`, { topic: topic.name });
+    }, [activeTab, topic.name]);
     const [showNotes, setShowNotes] = useState(false);
     const [copied, setCopied] = useState(false);
     const [xpGain, setXpGain] = useState(null);
@@ -71,6 +80,7 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
 
     const handleQuizComplete = (score, earnedXp, results) => {
         setXpGain(earnedXp);
+        Logger.action('Quiz Completed', `Score: ${score}, XP: ${earnedXp}`, { results: results.length });
 
         // Calculate aggregations
         const quizCount = results.length;

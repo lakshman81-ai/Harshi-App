@@ -46,7 +46,6 @@ const QAStatsModal = ({ onClose, darkMode }) => {
     // Safe access to stats
     const globalStats = progress.stats || { totalQuestions: 0, totalCorrect: 0, totalTimeSeconds: 0 };
     const subjectStats = progress.subjectStats || {};
-    const dailyStats = progress.dailyStats || {};
 
     // Derived Global Metrics
     const globalAccuracy = globalStats.totalQuestions > 0
@@ -58,12 +57,13 @@ const QAStatsModal = ({ onClose, darkMode }) => {
 
     // Derived Weekly Data (Last 7 Days)
     const weeklyData = useMemo(() => {
+        const stats = progress.dailyStats || {};
         const days = [];
         for (let i = 6; i >= 0; i--) {
             const d = new Date();
             d.setDate(d.getDate() - i);
             const key = d.toISOString().split('T')[0];
-            const stat = dailyStats[key] || { questions: 0 };
+            const stat = stats[key] || { questions: 0 };
             days.push({
                 label: d.toLocaleDateString('en-US', { weekday: 'short' }),
                 date: key,
@@ -71,7 +71,7 @@ const QAStatsModal = ({ onClose, darkMode }) => {
             });
         }
         return days;
-    }, [dailyStats]);
+    }, [progress.dailyStats]);
 
     const maxDailyQuestions = Math.max(...weeklyData.map(d => d.value), 10); // Scale max
 

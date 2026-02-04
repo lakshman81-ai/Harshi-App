@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { AlertTriangle, RotateCcw } from 'lucide-react';
+import { Logger } from '../../services/Logger';
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 
@@ -20,6 +21,7 @@ class ContentErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     // Log error for debugging (could be sent to error tracking service)
     console.error('ContentErrorBoundary caught error:', error, errorInfo);
+    Logger.error('ContentErrorBoundary caught error', { error: error.toString(), componentStack: errorInfo.componentStack });
   }
 
   handleRetry = () => {
