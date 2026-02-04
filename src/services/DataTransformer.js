@@ -232,27 +232,27 @@ export class DataTransformer {
     // Transform daily challenges
     static transformDailyChallenges(rows) {
         return rows.map(row => {
-            const questionText = row.question_text || row.question || row.challenge || row.daily_challenge || row.challenge_text || row.description || row.text || row.daily_question;
+            const questionText = row.question_text || row.question || row.Question || row.challenge || row.daily_challenge || row.challenge_text || row.description || row.text || row.daily_question;
 
             if (!questionText) {
                 console.warn('Daily Challenge: Missing Question Text. Available keys:', Object.keys(row));
             }
 
             return {
-                id: row.challenge_id || row.id || `dc-${Math.random().toString(36).substr(2, 9)}`,
-                subjectKey: (row.subject_key || row.subject || 'math').toLowerCase(),
+                id: row.challenge_id || row.id || row.ID || `dc-${Math.random().toString(36).substr(2, 9)}`,
+                subjectKey: (row.subject_key || row.subject || row.Subject || 'math').toLowerCase(),
                 difficulty: (row.difficulty || 'medium').toLowerCase(),
                 question: questionText || `Question not available`,
                 options: [
-                    { label: 'A', text: row.option_a || row.a },
-                    { label: 'B', text: row.option_b || row.b },
-                    { label: 'C', text: row.option_c || row.c },
-                    { label: 'D', text: row.option_d || row.d }
+                    { label: 'A', text: row.option_a || row.a || row['Option A'] },
+                    { label: 'B', text: row.option_b || row.b || row['Option B'] },
+                    { label: 'C', text: row.option_c || row.c || row['Option C'] },
+                    { label: 'D', text: row.option_d || row.d || row['Option D'] }
                 ].filter(opt => opt.text),
-                correctAnswer: (row.correct_answer || row.correct || 'A').toUpperCase(),
+                correctAnswer: (row.correct_answer || row.correct || row.Correct || 'A').toUpperCase(),
                 hint: row.hint,
                 explanation: row.explanation,
-                xpReward: parseInt(row.xp_reward || row.xp || 20),
+                xpReward: parseInt(row.xp_reward || row.xp || row.XP || 20),
                 imageUrl: row.image_url || row.image
             };
         });
