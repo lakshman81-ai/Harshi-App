@@ -1,0 +1,6 @@
+content_id,content_type,title,content,url,order_index
+term-bio-t1-1,key_term,Organelle,Specialized structure within a cell,,
+term-bio-t1-2,key_term,Prokaryote,Simple cell without nucleus (bacteria),,
+term-bio-t1-3,key_term,Eukaryote,"Complex cell with nucleus (plants, animals)",,
+term-bio-t1-4,key_term,Chloroplast,Site of photosynthesis in plants,,
+term-bio-t1-5,key_term,Cell Wall,Rigid outer layer of plant cells,,

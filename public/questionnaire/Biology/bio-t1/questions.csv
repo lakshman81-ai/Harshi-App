@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-bio-t1-1,bio-t1,Which organelle produces energy?,Ribosome,Nucleus,Mitochondria,Vacuole,C,Mitochondria perform cellular respiration to make ATP.,,,10
+quiz-bio-t1-2,bio-t1,What is found in plant cells but NOT animal cells?,Nucleus,Cell Wall,Mitochondria,Cell Membrane,B,Cell Wall provides rigid structure for plants.,,,10
+quiz-bio-t1-3,bio-t1,Control center of the cell?,Nucleus,Cytoplasm,Membrane,Golgi,A,Nucleus holds DNA instructions.,,,10
+quiz-bio-t1-4,bio-t1,Simple cells like bacteria are...,Eukaryotes,Prokaryotes,Animals,Plants,B,Prokaryotes lack a membrane-bound nucleus.,,,10
+quiz-bio-t1-5,bio-t1,Photosynthesis happens in...,Mitochondria,Chloroplasts,Ribosomes,Vacuoles,B,Chloroplasts contain chlorophyll for photosynthesis.,,,10

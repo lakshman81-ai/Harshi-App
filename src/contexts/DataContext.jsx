@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { sheetsService } from '../services/GoogleSheetsService';
 import { DataTransformer } from '../services/DataTransformer';
-import { fetchLocalExcelData } from '../services/excelService';
+import unifiedDataService from '../services/unifiedDataService';
 import { GOOGLE_SHEETS_CONFIG } from '../config';
 import { log } from '../utils';
 
@@ -59,18 +59,18 @@ export const DataProvider = ({ children }) => {
         }
         setError(null);
 
-        // Load from local Excel
+        // Load from local Excel/CSV
         if (dataSource === 'local' || !isGoogleSheetsConfigured) {
-            log('Loading local Multi-File Excel data');
+            log('Loading local data (CSV-first with Excel fallback)');
             try {
-                const rawExcelData = await fetchLocalExcelData();
-                const transformed = DataTransformer.transformAll(rawExcelData);
+                const rawData = await unifiedDataService.loadAppData();
+                const transformed = DataTransformer.transformAll(rawData);
                 setData(transformed);
                 setLastSync(new Date());
                 setSyncStatus('success');
-                log('Local Excel data loaded successfully');
+                log(`Local data loaded successfully from ${rawData._dataSource || 'unknown'} source`);
             } catch (e) {
-                console.error('Local Excel load error:', e);
+                console.error('Local data load error:', e);
                 setError('Failed to load local data: ' + e.message);
                 setSyncStatus('error');
             }
@@ -102,11 +102,11 @@ export const DataProvider = ({ children }) => {
             setError(err.message);
             setSyncStatus('error');
 
-            // Use fallback data from local Excel if enabled
+            // Use fallback data from local Excel/CSV if enabled
             if (!data) {
-                log('Attempting to load local Excel data as fallback...');
+                log('Attempting to load local data as fallback...');
                 try {
-                    const rawLocalData = await fetchLocalExcelData();
+                    const rawLocalData = await unifiedDataService.loadAppData();
                     const transformed = DataTransformer.transformAll(rawLocalData);
                     setData(transformed);
                     setLastSync(new Date());

@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-math-t2-1,math-t2,Which triangle has all equal sides?,Isosceles,Scalene,Equilateral,Right,C,Equi-lateral means equal sides.,,,10
+quiz-math-t2-2,math-t2,Calculate the hypotenuse if sides are 3 and 4.,5,6,7,25,A,3² + 4² = 9 + 16 = 25. √25 = 5.,,,10
+quiz-math-t2-3,math-t2,Sum of angles in a triangle?,90,180,360,100,B,Always 180 degrees.,,,10
+quiz-math-t2-4,math-t2,Area of a triangle with base 10 and height 5?,50,25,15,100,B,0.5 * 10 * 5 = 25.,,,10
+quiz-math-t2-5,math-t2,"A triangle with angles 90, 45, 45 is...",Obtuse,Acute,Right Isosceles,Equilateral,C,Right (has 90°) and Isosceles (two equal angles/sides).,,,10

@@ -1,0 +1,8 @@
+content_id,content_type,title,content,url,order_index
+form-math-t2-1,formula,Pythagorean Theorem,a^2 + b^2 = c^2,,
+form-math-t2-2,formula,Area of Triangle,A = \frac{1}{2}b \cdot h,,
+term-math-t2-1,key_term,Hypotenuse,Longest side of a right triangle,,
+term-math-t2-2,key_term,Isosceles,Triangle with 2 equal sides,,
+term-math-t2-3,key_term,Equilateral,Triangle with 3 equal sides,,
+term-math-t2-4,key_term,Scalene,Triangle with no equal sides,,
+term-math-t2-5,key_term,Right Angle,90 degree angle,,

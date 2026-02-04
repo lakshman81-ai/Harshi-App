@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-math-t1-1,math-t1,Simplify: 3x + 4y - x,7xy,2x + 4y,6xy,3x + 3y,B,Combine 3x and -x to get 2x. 4y stays separate.,,,10
+quiz-math-t1-2,math-t1,Expand: 2(x + 3),2x + 3,2x + 6,x + 6,5x,B,Multiply 2 by both terms inside: 2*x + 2*3.,,,10
+quiz-math-t1-3,math-t1,What is the coefficient in 5y?,y,5,5y,Unknown,B,The number multiplying the variable is the coefficient.,,,10
+quiz-math-t1-4,math-t1,Are 3x and 3x² like terms?,Yes,No,Sometimes,Only if x=1,B,"No, because the exponents are different.",,,10
+quiz-math-t1-5,math-t1,Evaluate 2x + 1 when x = 4,6,7,9,8,C,2(4) + 1 = 8 + 1 = 9.,,,10

@@ -1,0 +1,8 @@
+content_id,content_type,title,content,url,order_index
+form-phys-t3-1,formula,Ohm's Law,V = I \cdot R,,
+form-phys-t3-2,formula,Electrical Power,P = I \cdot V,,
+term-phys-t3-1,key_term,Voltage,Electrical potential difference (Volts),,
+term-phys-t3-2,key_term,Current,Flow of electric charge (Amps),,
+term-phys-t3-3,key_term,Resistance,Opposition to current flow (Ohms),,
+term-phys-t3-4,key_term,Series Circuit,A circuit with only one path for current,,
+term-phys-t3-5,key_term,Parallel Circuit,A circuit with multiple paths for current,,

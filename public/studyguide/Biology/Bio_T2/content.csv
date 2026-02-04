@@ -1,0 +1,7 @@
+content_id,content_type,title,content,url,order_index
+term-bio-t2-1,key_term,Gene,Unit of heredity,,
+term-bio-t2-2,key_term,Allele,"Variant form of a gene (e.g., Blue vs Brown eyes)",,
+term-bio-t2-3,key_term,Dominant,Trait that shows up if present (Capital letter),,
+term-bio-t2-4,key_term,Recessive,Trait that is hidden by dominant (Lowercase),,
+term-bio-t2-5,key_term,Genotype,"Genetic makeup (e.g., Bb)",,
+term-bio-t2-6,key_term,Phenotype,"Physical appearance (e.g., Brown eyes)",,

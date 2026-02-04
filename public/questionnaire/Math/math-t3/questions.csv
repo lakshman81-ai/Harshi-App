@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-math-t3-1,math-t3,Probability of flipping heads?,0.25,0.5,0.75,1.0,B,"1 favorable (heads) / 2 total (heads, tails) = 0.5",,,10
+quiz-math-t3-2,math-t3,Probability of rolling a 7 on a standard die?,1/6,1/2,0,1,C,Impossible. Die only goes to 6.,,,10
+quiz-math-t3-3,math-t3,"If P(Win) = 0.4, what is P(Lose)?",0.4,0.6,0.5,0.1,B,1 - 0.4 = 0.6,,,10
+quiz-math-t3-4,math-t3,Probability of flipping heads TWICE in a row?,0.5,0.25,0.1,0.75,B,0.5 * 0.5 = 0.25,,,10
+quiz-math-t3-5,math-t3,The set of all possible outcomes is called...,Event,Probability,Sample Space,Result,C,Definition of Sample Space.,,,10

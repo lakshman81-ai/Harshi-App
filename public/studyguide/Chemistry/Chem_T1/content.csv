@@ -1,0 +1,7 @@
+content_id,content_type,title,content,url,order_index
+form-chem-t1-1,formula,Mass Number,A = Z + N,,
+term-chem-t1-1,key_term,Nucleus,Central part of atom containing protons/neutrons,,
+term-chem-t1-2,key_term,Electron Shell,Region where electrons orbit,,
+term-chem-t1-3,key_term,Atomic Number,Number of protons (defines the element),,
+term-chem-t1-4,key_term,Mass Number,Protons + Neutrons,,
+term-chem-t1-5,key_term,Isotope,Same element with different number of neutrons,,

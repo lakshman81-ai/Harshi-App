@@ -1,0 +1,7 @@
+content_id,content_type,title,content,url,order_index
+form-math-t1-1,formula,Distributive Property,a(b + c) = ab + ac,,
+term-math-t1-1,key_term,Variable,A letter representing an unknown number,,
+term-math-t1-2,key_term,Coefficient,Number multiplying a variable,,
+term-math-t1-3,key_term,Constant,A fixed value that does not change,,
+term-math-t1-4,key_term,Like Terms,Terms that have identical variable parts,,
+term-math-t1-5,key_term,Distributive Property,a(b + c) = ab + ac,,

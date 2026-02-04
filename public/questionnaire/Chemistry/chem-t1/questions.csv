@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-chem-t1-1,chem-t1,Which particle has a positive charge?,Electron,Neutron,Proton,Photon,C,Protons are positive (+),,,10
+quiz-chem-t1-2,chem-t1,Where are electrons found?,Nucleus,Shells,Inside protons,Everywhere,B,Electrons orbit in shells/clouds around the nucleus.,,,10
+quiz-chem-t1-3,chem-t1,Atomic number tells you the number of...,Neutrons,Electrons,Protons,Isotopes,C,Atomic number = number of protons.,,,10
+quiz-chem-t1-4,chem-t1,Isotopes have different numbers of...,Protons,Neutrons,Electrons,Shells,B,Isotopes are same element (same protons) but different mass (neutrons).,,,10
+quiz-chem-t1-5,chem-t1,Most of an atom is...,Solid,Liquid,Empty space,Gas,C,The nucleus is tiny compared to the electron cloud volume.,,,10
