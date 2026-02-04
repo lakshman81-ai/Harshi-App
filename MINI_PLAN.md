@@ -116,3 +116,28 @@ This document provides elaborate implementation details for the next phase of "S
     *   **Render:**
         *   SVG Map.
         *   `<Tooltip>` or `<InfoPanel>` displaying `info` when a region is clicked.
+
+---
+
+## 5. Testing Strategy
+
+**Goal:** Ensure reliability of these advanced features.
+
+### 5.1 Adaptive Engine
+*   **Unit Tests:**
+    *   Test `selectQuestions` with various mastery scores.
+    *   Assert that low mastery yields mostly easy questions.
+    *   Assert that high mastery yields mostly hard questions.
+    *   Assert that exactly 5 questions are returned.
+
+### 5.2 Concept Clarifier
+*   **Integration Tests:**
+    *   Mock `geminiService` response.
+    *   Verify "Explain" button appears on wrong answer.
+    *   Verify loading state and final text display.
+
+### 5.3 Interactive Handouts
+*   **Component Tests:**
+    *   Verify `GraphExplorer` renders without crashing.
+    *   Verify slider changes trigger update (mock `functionPlot`).
+    *   Verify `InteractiveSVG` renders regions and tooltips appear on click.
