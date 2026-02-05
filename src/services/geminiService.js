@@ -1,8 +1,4 @@
 import { Logger } from './Logger';
-import { search } from 'duck-duck-scrape';
-
-// Helper to check if string contains any of these terms
-const contains = (text, terms) => terms.some(t => text.toLowerCase().includes(t.toLowerCase()));
 
 /**
  * Fallback to DuckDuckGo search if Gemini is unavailable
@@ -11,17 +7,19 @@ const contains = (text, terms) => terms.some(t => text.toLowerCase().includes(t.
 export const getFallbackExplanation = async (context) => {
     Logger.info('Using DuckDuckGo Fallback for Explanation');
     try {
-        const query = `explain why "${context.wrongAnswer}" is wrong and "${context.correctAnswer}" is correct for question: "${context.question}"`;
-        const searchResults = await search(query, {
-            safeSearch: "Strict",
-            limit: 3
-        });
+        // Use DuckDuckGo Instant Answer API (CORS-friendly, no Node dependencies)
+        const query = `${context.question} ${context.correctAnswer} explanation`;
+        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1`;
 
-        if (searchResults.results && searchResults.results.length > 0) {
-            // Try to find a good snippet
-            const snippet = searchResults.results[0].description || searchResults.results[0].title;
-            return `I couldn't generate a custom explanation right now, but here is what I found online: "${snippet}" (Source: ${searchResults.results[0].url})`;
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.AbstractText) {
+            return `I couldn't generate a custom explanation right now, but here is what I found: "${data.AbstractText}" (Source: ${data.AbstractURL || 'DuckDuckGo'})`;
+        } else if (data.RelatedTopics && data.RelatedTopics.length > 0 && data.RelatedTopics[0].Text) {
+             return `I couldn't generate a custom explanation right now, but here is a related concept: "${data.RelatedTopics[0].Text}" (Source: ${data.RelatedTopics[0].FirstURL || 'DuckDuckGo'})`;
         }
+
     } catch (error) {
         Logger.error('DuckDuckGo Fallback Failed', error);
     }
