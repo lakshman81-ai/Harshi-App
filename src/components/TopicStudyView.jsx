@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useMemo } from 'react';
 import { BookOpen, Star, ChevronLeft, FileText, HelpCircle, ClipboardList, Check, StickyNote, Target, Lightbulb, AlertTriangle, Globe, FlaskConical, ChevronRight, Bookmark, Copy, Clock } from 'lucide-react';
 import { useStudy } from '../contexts/StudyContext';
 import { cn } from '../utils';
@@ -26,7 +26,9 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
     const topicObjectives = objectives[topicKey] || [];
     const topicTerms = keyTerms[topicKey] || [];
     const topicFormulas = formulas[topicKey] || [];
-    const topicQuizzes = quizQuestions[topicKey] || [];
+
+    // Memoize topicQuizzes to prevent unnecessary re-renders and ESLint warnings
+    const topicQuizzes = useMemo(() => quizQuestions[topicKey] || [], [quizQuestions, topicKey]);
 
     // State
     const [activeTab, setActiveTab] = useState('study'); // 'study' | 'quiz' | 'handout'
