@@ -1,22 +1,49 @@
-import { log } from '../utils';
+import { Logger } from './Logger';
 
 export class DataTransformer {
+    /**
+     * Helper to get value from row with case-insensitive key lookup
+     * @param {Object} row - The data row
+     * @param {string|string[]} keys - Key or array of keys to look for
+     * @param {any} defaultValue - Fallback value
+     */
+    static _getValue(row, keys, defaultValue = null) {
+        if (!row) return defaultValue;
+
+        const searchKeys = Array.isArray(keys) ? keys : [keys];
+        const rowKeys = Object.keys(row);
+        const lowerRowKeys = rowKeys.map(k => k.toLowerCase());
+
+        for (const key of searchKeys) {
+            // Direct match
+            if (row[key] !== undefined) return row[key];
+
+            // Case-insensitive match
+            const index = lowerRowKeys.indexOf(key.toLowerCase());
+            if (index !== -1) {
+                return row[rowKeys[index]];
+            }
+        }
+
+        return defaultValue;
+    }
+
     // Transform subjects sheet
     static transformSubjects(rows) {
         const subjects = {};
 
         rows.forEach(row => {
-            const key = row.subject_key;
+            const key = this._getValue(row, ['subject_key', 'subject', 'key']);
             if (!key) return;
 
             subjects[key] = {
-                id: row.subject_id || key,
-                name: row.name || key,
-                icon: row.icon || 'BookOpen',
-                color: row.color_hex || '#6366F1',
-                lightBg: row.light_bg || 'bg-slate-50',
-                gradient: `from-${row.gradient_from || 'slate-500'} to-${row.gradient_to || 'slate-600'}`,
-                darkGlow: row.dark_glow || 'shadow-slate-500/20',
+                id: this._getValue(row, ['subject_id', 'id']) || key,
+                name: this._getValue(row, ['subject_name', 'name']) || key,
+                icon: this._getValue(row, 'icon', 'BookOpen'),
+                color: this._getValue(row, ['color_hex', 'color'], '#6366F1'),
+                lightBg: this._getValue(row, ['light_bg', 'bg'], 'bg-slate-50'),
+                gradient: `from-${this._getValue(row, 'gradient_from', 'slate-500')} to-${this._getValue(row, 'gradient_to', 'slate-600')}`,
+                darkGlow: this._getValue(row, 'dark_glow', 'shadow-slate-500/20'),
                 topics: []
             };
         });
@@ -27,14 +54,18 @@ export class DataTransformer {
     // Transform topics and attach to subjects
     static transformTopics(rows, subjects) {
         rows.forEach(row => {
-            const subjectKey = row.subject_key;
-            if (!subjectKey || !subjects[subjectKey]) return;
+            const subjectKey = this._getValue(row, ['subject_key', 'subject']);
+            if (!subjectKey || !subjects[subjectKey]) {
+                if (subjectKey) Logger.warn(`Topic references unknown subject: ${subjectKey}`, row, 'DataTransformer');
+                return;
+            }
 
             subjects[subjectKey].topics.push({
-                id: row.topic_id,
-                name: row.topic_name,
-                duration: parseInt(row.duration_minutes) || 20,
-                orderIndex: parseInt(row.order_index) || 0
+                id: this._getValue(row, ['topic_id', 'id']),
+                name: this._getValue(row, ['topic_name', 'name']),
+                folder: this._getValue(row, ['topic_folder', 'folder']), // Added folder support
+                duration: parseInt(this._getValue(row, ['duration_minutes', 'duration'], 20)),
+                orderIndex: parseInt(this._getValue(row, ['order_index', 'order'], 0))
             });
         });
 
@@ -48,11 +79,10 @@ export class DataTransformer {
 
     // Transform sections (grouped by topic_id)
     static transformSections(rows) {
-        console.log('[DataTransformer] transformSections received:', rows.length, 'rows');
         const sections = {};
 
         rows.forEach(row => {
-            const topicId = row.topic_id;
+            const topicId = this._getValue(row, ['topic_id', 'topic']);
             if (!topicId) return;
 
             if (!sections[topicId]) {
@@ -60,11 +90,11 @@ export class DataTransformer {
             }
 
             sections[topicId].push({
-                id: row.section_id,
-                title: row.section_title,
-                icon: row.section_icon || 'FileText',
-                type: row.section_type || 'content',
-                orderIndex: parseInt(row.order_index) || 0
+                id: this._getValue(row, ['section_id', 'id']),
+                title: this._getValue(row, ['section_title', 'title']),
+                icon: this._getValue(row, ['section_icon', 'icon'], 'FileText'),
+                type: this._getValue(row, ['section_type', 'type'], 'content'),
+                orderIndex: parseInt(this._getValue(row, ['order_index', 'order'], 0))
             });
         });
 
@@ -73,7 +103,6 @@ export class DataTransformer {
             arr.sort((a, b) => a.orderIndex - b.orderIndex);
         });
 
-        console.log('[DataTransformer] transformSections result:', sections);
         return sections;
     }
 
@@ -82,7 +111,7 @@ export class DataTransformer {
         const objectives = {};
 
         rows.forEach(row => {
-            const topicId = row.topic_id;
+            const topicId = this._getValue(row, ['topic_id', 'topic']);
             if (!topicId) return;
 
             if (!objectives[topicId]) {
@@ -90,9 +119,9 @@ export class DataTransformer {
             }
 
             objectives[topicId].push({
-                id: row.objective_id,
-                text: row.objective_text,
-                orderIndex: parseInt(row.order_index) || 0
+                id: this._getValue(row, ['objective_id', 'id']),
+                text: this._getValue(row, ['objective_text', 'text']),
+                orderIndex: parseInt(this._getValue(row, ['order_index', 'order'], 0))
             });
         });
 
@@ -108,7 +137,7 @@ export class DataTransformer {
         const terms = {};
 
         rows.forEach(row => {
-            const topicId = row.topic_id;
+            const topicId = this._getValue(row, ['topic_id', 'topic']);
             if (!topicId) return;
 
             if (!terms[topicId]) {
@@ -116,9 +145,9 @@ export class DataTransformer {
             }
 
             terms[topicId].push({
-                id: row.term_id,
-                term: row.term,
-                definition: row.definition
+                id: this._getValue(row, ['term_id', 'id']),
+                term: this._getValue(row, ['term', 'name']),
+                definition: this._getValue(row, ['definition', 'def'])
             });
         });
 
@@ -130,7 +159,7 @@ export class DataTransformer {
         const content = {};
 
         rows.forEach(row => {
-            const sectionId = row.section_id;
+            const sectionId = this._getValue(row, ['section_id', 'section']);
             if (!sectionId) return;
 
             if (!content[sectionId]) {
@@ -138,24 +167,35 @@ export class DataTransformer {
             }
 
             let interactiveData = null;
-            if (row.interactive_data) {
+            const interactiveStr = this._getValue(row, ['interactive_data', 'data']);
+            if (interactiveStr) {
                 try {
-                    interactiveData = JSON.parse(row.interactive_data);
+                    interactiveData = JSON.parse(interactiveStr);
                 } catch (e) {
-                    console.warn('Failed to parse interactive_data', e);
+                    Logger.warn('Failed to parse interactive_data', { error: e.message, row }, 'DataTransformer');
                 }
             }
 
-            content[sectionId].push({
-                id: row.content_id,
-                type: row.content_type || 'text',
-                title: row.content_title || '',
-                text: row.content_text || '',
-                orderIndex: parseInt(row.order_index) || 0,
-                imageUrl: row.image_url || '',
-                videoUrl: row.video_url || '',
-                interactiveData: interactiveData
-            });
+            const contentType = this._getValue(row, ['content_type', 'type'], 'text');
+            const item = {
+                id: this._getValue(row, ['content_id', 'id']),
+                type: contentType,
+                title: this._getValue(row, ['content_title', 'title'], ''),
+                text: this._getValue(row, ['content_text', 'text', 'content'], ''),
+                orderIndex: parseInt(this._getValue(row, ['order_index', 'order'], 0)),
+                imageUrl: this._getValue(row, ['image_url', 'image'], ''),
+                videoUrl: this._getValue(row, ['video_url', 'video'], ''),
+                interactiveData: interactiveData,
+            };
+
+            // Enhanced mapping for specific content types
+            if (contentType === 'misconception') {
+                item.explanation = this._getValue(row, 'explanation', '');
+                item.wrongExample = this._getValue(row, ['common_misconception', 'misconception', 'wrong_example'], '');
+                item.correctExample = this._getValue(row, ['correction', 'correct_example'], '');
+            }
+
+            content[sectionId].push(item);
         });
 
         Object.values(content).forEach(arr => {
@@ -170,7 +210,7 @@ export class DataTransformer {
         const formulas = {};
 
         rows.forEach(row => {
-            const topicId = row.topic_id;
+            const topicId = this._getValue(row, ['topic_id', 'topic']);
             if (!topicId) return;
 
             if (!formulas[topicId]) {
@@ -179,20 +219,20 @@ export class DataTransformer {
 
             const variables = [];
             for (let i = 1; i <= 5; i++) {
-                const symbol = row[`variable_${i}_symbol`];
+                const symbol = this._getValue(row, `variable_${i}_symbol`);
                 if (symbol) {
                     variables.push({
                         symbol,
-                        name: row[`variable_${i}_name`] || '',
-                        unit: row[`variable_${i}_unit`] || ''
+                        name: this._getValue(row, `variable_${i}_name`, ''),
+                        unit: this._getValue(row, `variable_${i}_unit`, '')
                     });
                 }
             }
 
             formulas[topicId].push({
-                id: row.formula_id,
-                formula: row.formula_text,
-                label: row.formula_label || '',
+                id: this._getValue(row, ['formula_id', 'id']),
+                formula: this._getValue(row, ['formula_text', 'formula']),
+                label: this._getValue(row, ['formula_label', 'label'], ''),
                 variables
             });
         });
@@ -205,7 +245,7 @@ export class DataTransformer {
         const quizzes = {};
 
         rows.forEach(row => {
-            const topicId = row.topic_id;
+            const topicId = this._getValue(row, ['topic_id', 'topic']);
             if (!topicId) return;
 
             if (!quizzes[topicId]) {
@@ -213,18 +253,18 @@ export class DataTransformer {
             }
 
             quizzes[topicId].push({
-                id: row.question_id,
-                question: row.question_text,
+                id: this._getValue(row, ['question_id', 'id']),
+                question: this._getValue(row, ['question_text', 'question']),
                 options: [
-                    { label: 'A', text: row.option_a || '' },
-                    { label: 'B', text: row.option_b || '' },
-                    { label: 'C', text: row.option_c || '' },
-                    { label: 'D', text: row.option_d || '' }
+                    { label: 'A', text: this._getValue(row, ['option_a', 'a'], '') },
+                    { label: 'B', text: this._getValue(row, ['option_b', 'b'], '') },
+                    { label: 'C', text: this._getValue(row, ['option_c', 'c'], '') },
+                    { label: 'D', text: this._getValue(row, ['option_d', 'd'], '') }
                 ].filter(opt => opt.text),
-                correctAnswer: row.correct_answer?.toUpperCase() || 'A',
-                explanation: row.explanation || '',
-                xpReward: parseInt(row.xp_reward) || 10,
-                difficulty: (row.difficulty || 'medium').toLowerCase()
+                correctAnswer: (this._getValue(row, ['correct_answer', 'answer'], 'A')).toUpperCase(),
+                explanation: this._getValue(row, 'explanation', ''),
+                xpReward: parseInt(this._getValue(row, ['xp_reward', 'xp'], 10)),
+                difficulty: (this._getValue(row, 'difficulty', 'medium')).toLowerCase()
             });
         });
 
@@ -234,52 +274,52 @@ export class DataTransformer {
     // Transform achievements
     static transformAchievements(rows) {
         return rows.map(row => ({
-            id: row.achievement_id,
-            icon: row.icon || 'Star',
-            name: row.name,
-            desc: row.description,
-            condition: row.unlock_condition || ''
+            id: this._getValue(row, ['achievement_id', 'id']),
+            icon: this._getValue(row, 'icon', 'Star'),
+            name: this._getValue(row, 'name'),
+            desc: this._getValue(row, ['description', 'desc']),
+            condition: this._getValue(row, ['unlock_condition', 'condition'], '')
         }));
     }
 
     // Transform daily challenges
     static transformDailyChallenges(rows) {
         return rows.map(row => {
-            const questionText = row.question_text || row.question || row.Question || row.challenge || row.daily_challenge || row.challenge_text || row.description || row.text || row.daily_question;
+            const questionText = this._getValue(row, ['question_text', 'question', 'Question', 'challenge', 'daily_challenge', 'challenge_text', 'description', 'text', 'daily_question']);
 
             if (!questionText) {
-                console.warn('Daily Challenge: Missing Question Text. Available keys:', Object.keys(row));
+                Logger.warn('Daily Challenge: Missing Question Text', row, 'DataTransformer');
             }
 
             return {
-                id: row.challenge_id || row.id || row.ID || `dc-${Math.random().toString(36).substr(2, 9)}`,
-                subjectKey: (row.subject_key || row.subject || row.Subject || 'math').toLowerCase(),
-                difficulty: (row.difficulty || 'medium').toLowerCase(),
+                id: this._getValue(row, ['challenge_id', 'id', 'ID'], `dc-${Math.random().toString(36).substr(2, 9)}`),
+                subjectKey: this._getValue(row, ['subject_key', 'subject', 'Subject'], 'math').toLowerCase(),
+                difficulty: this._getValue(row, 'difficulty', 'medium').toLowerCase(),
                 question: questionText || `Question not available`,
                 options: [
-                    { label: 'A', text: row.option_a || row.a || row['Option A'] },
-                    { label: 'B', text: row.option_b || row.b || row['Option B'] },
-                    { label: 'C', text: row.option_c || row.c || row['Option C'] },
-                    { label: 'D', text: row.option_d || row.d || row['Option D'] }
+                    { label: 'A', text: this._getValue(row, ['option_a', 'a', 'Option A']) },
+                    { label: 'B', text: this._getValue(row, ['option_b', 'b', 'Option B']) },
+                    { label: 'C', text: this._getValue(row, ['option_c', 'c', 'Option C']) },
+                    { label: 'D', text: this._getValue(row, ['option_d', 'd', 'Option D']) }
                 ].filter(opt => opt.text),
-                correctAnswer: (row.correct_answer || row.correct || row.Correct || 'A').toUpperCase(),
-                hint: row.hint,
-                explanation: row.explanation,
-                xpReward: parseInt(row.xp_reward || row.xp || row.XP || 20),
-                imageUrl: row.image_url || row.image
+                correctAnswer: this._getValue(row, ['correct_answer', 'correct', 'Correct'], 'A').toUpperCase(),
+                hint: this._getValue(row, 'hint'),
+                explanation: this._getValue(row, 'explanation'),
+                xpReward: parseInt(this._getValue(row, ['xp_reward', 'xp', 'XP'], 20)),
+                imageUrl: this._getValue(row, ['image_url', 'image'])
             };
         });
     }
 
     // Transform all data
     static transformAll(rawData) {
-        log('Transforming data...');
+        Logger.info('Starting Data Transformation', null, 'DataTransformer');
 
         // Build subjects with topics
         let subjects = this.transformSubjects(rawData.SUBJECTS || []);
         subjects = this.transformTopics(rawData.TOPICS || [], subjects);
 
-        return {
+        const result = {
             subjects,
             sections: this.transformSections(rawData.TOPIC_SECTIONS || []),
             objectives: this.transformObjectives(rawData.LEARNING_OBJECTIVES || []),
@@ -290,5 +330,8 @@ export class DataTransformer {
             achievements: this.transformAchievements(rawData.ACHIEVEMENTS || []),
             dailyChallenges: this.transformDailyChallenges(rawData.DAILY_CHALLENGES || [])
         };
+
+        Logger.gate('Data Transformation', true, 'DataTransformer');
+        return result;
     }
 }

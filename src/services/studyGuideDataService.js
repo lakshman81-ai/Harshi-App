@@ -10,6 +10,7 @@ import Papa from 'papaparse';
 import { Logger } from './Logger';
 
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
+const CONTEXT = 'StudyGuideDataService';
 
 // ... typedefs ...
 
@@ -22,12 +23,17 @@ export async function loadStudyGuideCSV(path) {
     const url = `${PUBLIC_URL}/${path}`;
 
     try {
-        Logger.info(`[StudyGuideData] Loading: ${path}`);
+        Logger.data(`Loading CSV: ${path}`, { url }, CONTEXT);
         const response = await fetch(url);
 
         // DECISION GATE: File exists?
         if (!response.ok) {
-            Logger.warn(`[StudyGuideData] File not found: ${path} (Status: ${response.status})`);
+            // Log 404s as warnings (expected for optional files)
+            if (response.status === 404) {
+                Logger.warn(`File not found: ${path}`, { status: 404 }, CONTEXT);
+            } else {
+                Logger.error(`HTTP Error loading ${path}`, { status: response.status }, CONTEXT);
+            }
             return []; // Graceful fallback
         }
 
@@ -41,16 +47,16 @@ export async function loadStudyGuideCSV(path) {
         });
 
         if (result.errors.length > 0) {
-            Logger.warn(`[StudyGuideData] Parse warnings for ${path}`, result.errors);
+            Logger.warn(`Parse warnings for ${path}`, result.errors, CONTEXT);
             // Continue anyway - partial data is better than no data
         }
 
-        Logger.info(`[StudyGuideData] ✓ Loaded ${result.data.length} rows from ${path}`);
+        Logger.data(`Loaded ${result.data.length} rows from ${path}`, null, CONTEXT);
         return result.data;
 
     } catch (error) {
         // ERROR LOGGING: Network/fetch errors
-        Logger.error(`[StudyGuideData] ✗ Failed to load ${path}`, error);
+        Logger.error(`Failed to load ${path}`, error, CONTEXT);
         return []; // Graceful fallback
     }
 }

@@ -7,31 +7,41 @@
 import Papa from 'papaparse';
 import { Logger } from './Logger';
 
+const CONTEXT = 'CSVService';
+
 /**
  * Fetch and parse CSV data from a URL or local path
  * @param {string} filePath - Path to CSV file
  * @returns {Promise<Array<Object>>} Parsed CSV data
  */
 export async function fetchCSV(filePath) {
+    const publicUrl = process.env.PUBLIC_URL || '';
+    const fullPath = filePath.startsWith('/') && publicUrl && !filePath.startsWith(publicUrl)
+        ? `${publicUrl}${filePath}`
+        : filePath;
+
     try {
-        // Always use PUBLIC_URL if it's configured (even in localhost)
-        // This handles the case where homepage is set in package.json
-        const publicUrl = process.env.PUBLIC_URL || '';
-
-        const fullPath = filePath.startsWith('/') && publicUrl && !filePath.startsWith(publicUrl)
-            ? `${publicUrl}${filePath}`
-            : filePath;
-
-        Logger.action('CSV Fetch', `Fetching: ${fullPath}`, { publicUrl });
+        Logger.data(`Fetching CSV: ${fullPath}`, { publicUrl }, CONTEXT);
 
         const response = await fetch(fullPath);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            // Log 404s as warnings (expected for optional files), others as errors
+            if (response.status === 404) {
+                Logger.warn(`File not found: ${fullPath}`, { status: 404 }, CONTEXT);
+            } else {
+                Logger.error(`HTTP Error: ${fullPath}`, { status: response.status }, CONTEXT);
+            }
+            return []; // Graceful fallback
         }
+
         const text = await response.text();
-        return parseCSV(text);
+        const data = parseCSV(text, fullPath);
+
+        Logger.data(`Loaded ${data.length} rows from ${filePath}`, null, CONTEXT);
+        return data;
+
     } catch (error) {
-        Logger.error(`Error fetching CSV from ${filePath}`, error);
+        Logger.error(`Network/Fetch Error: ${fullPath}`, error, CONTEXT);
         return [];
     }
 }
@@ -39,9 +49,10 @@ export async function fetchCSV(filePath) {
 /**
  * Parse CSV text to array of objects using Papa Parse
  * @param {string} csvText - CSV text content
+ * @param {string} source - Source file path for logging
  * @returns {Array<Object>} Array of row objects
  */
-function parseCSV(csvText) {
+function parseCSV(csvText, source) {
     const result = Papa.parse(csvText, {
         header: true,           // First row = column names
         skipEmptyLines: true,   // Ignore blank rows
@@ -49,7 +60,7 @@ function parseCSV(csvText) {
     });
 
     if (result.errors.length > 0) {
-        console.warn('CSV parse warnings:', result.errors.slice(0, 3));
+        Logger.warn(`CSV Parse Warnings for ${source}`, result.errors.slice(0, 3), CONTEXT);
     }
 
     return result.data;
@@ -95,10 +106,7 @@ export async function loadStudyContent(subject, topicFolder) {
  */
 export async function loadSections(subject, topicFolder) {
     const path = `/studyguide/${subject}/${topicFolder}/sections.csv`;
-    console.log(`🔵 [csvService.loadSections] Loading sections from: ${path}`);
-    const result = await fetchCSV(path);
-    console.log(`🔵 [csvService.loadSections] Loaded ${result.length} section rows from ${path}:`, result);
-    return result;
+    return fetchCSV(path);
 }
 
 /**

@@ -1,6 +1,7 @@
 import React, { memo, useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Star } from 'lucide-react';
+import { Logger } from '../../services/Logger';
 
 // Import subcomponents
 import StudyGuideHeader from './StudyGuideHeader';
@@ -112,6 +113,12 @@ const StudyGuide = memo(({
     () => currentSection && bookmarks.includes(`${topicKey}-${currentSection.id}`),
     [currentSection, bookmarks, topicKey]
   );
+
+  // Extract misconceptions for the current section
+  const sectionMisconceptions = useMemo(() => {
+    if (!sectionContent) return [];
+    return sectionContent.filter(item => item.type === 'misconception');
+  }, [sectionContent]);
 
   // Scroll to top when section changes
   useEffect(() => {
@@ -290,6 +297,7 @@ const StudyGuide = memo(({
           topic={topicKey}
           subtopicId={currentSection.id}
           keyTerms={topicTerms}
+          misconceptions={sectionMisconceptions}
           darkMode={darkMode}
           onClose={() => setShowReview(false)}
           onComplete={handleReviewComplete}
