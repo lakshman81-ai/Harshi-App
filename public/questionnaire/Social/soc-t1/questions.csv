@@ -1,0 +1,7 @@
+id,question_type,question,options,correct_answer,accepted_answers,hint,explanation,difficulty,xp_reward
+soc-q1,mcq,Which of these is a renewable resource?,Coal|Petroleum|Solar Energy|Natural Gas,C,,It comes from the sun and won't run out.,Solar energy is replenished naturally and quickly.,easy,10
+soc-q2,mcq,Resources that are drawn from nature and used without much modification are called:,Human Made Resources|Natural Resources|Human Resources|Cultural Resources,B,,Think about water, soil, and minerals.,Natural resources are gifts of nature provided freely.,easy,10
+soc-q3,true_false,Coal is considered a renewable resource.,True|False,False,,Can we make more coal in our lifetime?,Coal takes millions of years to form and is non-renewable.,medium,10
+soc-q4,fill_blank,Resources that have life such as plants and animals are called _______ resources.,,,Biotic|biotic|living|Living,Bio means life.,Biotic resources are obtained from the biosphere and have life.,medium,15
+soc-q5,matching,Match the resource type with its definition.,"Biotic:Living things|Abiotic:Non-living things|Renewable:Replenishable quickly|Non-renewable:Limited stock","Biotic:Living things|Abiotic:Non-living things|Renewable:Replenishable quickly|Non-renewable:Limited stock",,Match life/non-life and unlimited/limited.,Biotic=Life, Abiotic=No Life, Renewable=Unlimited, Non-renewable=Limited.,hard,20
+soc-q6,true_false,Technology is a human-made resource.,True|False,True,,Did nature create smartphones?,Humans use knowledge and skill to create technology.,easy,10

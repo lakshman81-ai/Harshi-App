@@ -1,0 +1,8 @@
+id,question_type,question,options,correct_answer,accepted_answers,hint,explanation,difficulty,xp_reward
+q1,mcq,What is 2x + 3x?,2x|5x|6x|x,B,,Add the coefficients of like terms.,Like terms (same variable) can be added: 2x + 3x = 5x,easy,10
+q2,mcq,Which expression equals 3(x + 2)?,3x + 2|3x + 6|x + 6|3x + 5,B,,Distribute the 3 to both terms.,3 × x = 3x and 3 × 2 = 6,medium,15
+q3,true_false,Variables can only represent whole numbers.,True|False,False,,Think about x = 0.5,Variables can represent any number including decimals and fractions.,easy,10
+q4,true_false,The expression 5x - 5x always equals zero.,True|False,True,,What happens when you subtract a number from itself?,Any term minus itself equals zero: 5x - 5x = 0,medium,15
+q5,fill_blank,The coefficient in the term 7y is _______.,,,7|seven,What number multiplies the variable?,The coefficient is the numerical factor in front of a variable.,easy,10
+q6,fill_blank,An algebraic expression with one term is called a _______.,,,monomial|mono,Think: mono means one.,A monomial has exactly one term (e.g. 5x or 3).,medium,15
+q7,matching,Match each algebraic term with its definition.,"Variable:A letter representing an unknown|Coefficient:The number multiplying a variable|Constant:A fixed numerical value|Term:A single part of an expression","Variable:A letter representing an unknown|Coefficient:The number multiplying a variable|Constant:A fixed numerical value|Term:A single part of an expression",,Match each word with what it means.,Understanding these terms helps you read and write expressions.,hard,20

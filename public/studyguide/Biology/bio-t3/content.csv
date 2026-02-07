@@ -1,0 +1,6 @@
+content_id,content_type,title,content,url,order_index
+term-bio-t3-1,key_term,Biotic,"Living components (plants, animals)",,
+term-bio-t3-2,key_term,Abiotic,"Non-living components (sun, water, soil)",,
+term-bio-t3-3,key_term,Producer,Organism that makes its own food (plants),,
+term-bio-t3-4,key_term,Consumer,Organism that eats others,,
+term-bio-t3-5,key_term,Decomposer,Breaks down dead matter,,

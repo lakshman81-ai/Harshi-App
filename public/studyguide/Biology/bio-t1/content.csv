@@ -1,0 +1,8 @@
+content_id,section_id,content_type,content_title,content_text,explanation,common_misconception,correction,order_index
+term-bio-t1-1,bio-sec-1,key_term,Nucleus,A membrane-bound organelle that contains the cell's chromosomes.,,,,1
+term-bio-t1-2,bio-sec-1,key_term,Mitochondria,Organelles that generate most of the chemical energy needed to power the cell's biochemical reactions.,,,,2
+term-bio-t1-3,bio-sec-1,key_term,Ribosome,A minute particle consisting of RNA and associated proteins found in large numbers in the cytoplasm of living cells.,,,,3
+term-bio-t1-4,bio-sec-1,key_term,Cell Wall,A rigid layer of polysaccharides lying outside the plasma membrane of the cells of plants and fungi and bacteria.,,,,4
+term-bio-t1-5,bio-sec-1,key_term,Cytoplasm,The gelatinous liquid that fills the inside of a cell.,,,,5
+misc-bio-t1-1,bio-sec-1,misconception,Size of Cells,"Students believe all cells are microscopic and similar in size.",Cells vary greatly in size (e.g. ostrich egg is a single cell).,Some cells are visible to the naked eye (like eggs) while others are microscopic.,6
+misc-bio-t1-2,bio-sec-1,misconception,Mitochondria in Plants,"Students think only animal cells have mitochondria because plants have chloroplasts.",Plants need mitochondria for cellular respiration too.,Plants have BOTH chloroplasts (for photosynthesis) AND mitochondria (for energy breakdown).,7

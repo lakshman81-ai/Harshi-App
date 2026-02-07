@@ -1,0 +1,16 @@
+content_id,content_type,title,content,order_index
+h001,text,Introduction to Newton's Laws,"Newton's Laws form the foundation of classical mechanics and describe the relationship between motion and forces.",1
+h002,mermaid,Force Diagram,"graph TD
+    A[Object at Rest] -->|Force Applied| B[Object in Motion]
+    B -->|Friction/Resistance| C[Slowing Down]
+    C -->|No Net Force| A
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#ffe1e1",2
+h003,text,Key Concepts,"The three laws describe: 1) Inertia - objects resist changes in motion, 2) F=ma - force equals mass times acceleration, 3) Action-Reaction - forces come in pairs.",3
+h004,mermaid,Newton's Laws Timeline,"timeline
+    title Development of Newton's Laws
+    1665 : Plague year - Newton develops early ideas
+    1687 : Publishes Principia Mathematica
+    1700s : Laws applied to astronomy and engineering
+    1900s : Relativity provides corrections for high speeds",4

@@ -1,0 +1,9 @@
+content_id,content_type,title,content,url,order_index
+form-phys-t2-1,formula,Work,W = F \cdot d,,
+form-phys-t2-2,formula,Kinetic Energy,KE = \frac{1}{2}mv^2,,
+form-phys-t2-3,formula,Gravitational Potential Energy,PE_g = mgh,,
+term-phys-t2-1,key_term,Work,Force applied over a distance (Joules),,
+term-phys-t2-2,key_term,Kinetic Energy,Energy of motion,,
+term-phys-t2-3,key_term,Potential Energy,Stored energy due to position or state,,
+term-phys-t2-4,key_term,Power,The rate at which work is done (Watts),,
+term-phys-t2-5,key_term,Mechanical Energy,Sum of potential and kinetic energy,,

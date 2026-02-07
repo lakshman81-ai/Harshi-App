@@ -1,0 +1,13 @@
+content_id,section_id,content_type,content_title,content_text,video_url,image_url,description,order_index
+phys-c001,phys-t001-s003,introduction,Introduction to Forces,Forces are pushes or pulls that can cause objects to accelerate.,,,,1
+phys-c002,phys-t001-s003,concept_helper,Inertia,Inertia is not a force, it's a property of matter. More mass = more inertia.,,,,2
+phys-ho001,phys-t001-s003,text,Handout: Newton's Laws,1. Inertia: Objects keep doing what they're doing.\n2. F=ma: Force equals Mass times Acceleration.\n3. Action-Reaction: Forces come in pairs.,,,,3
+math-c001,math-t001-s001,introduction,Power Up!,Exponents represent repeated multiplication. They are a shortcut for writing big numbers.,,,,1
+math-c002,math-t001-s001,warning,Common Mistake,Don't multiply the base by the exponent! 3^2 is 9, not 6.,,,,2
+math-ho001,math-t001-s001,text,Handout: Exponent Rules,"1. Product Rule: x^a * x^b = x^(a+b)\n2. Power Rule: (x^a)^b = x^(a*b)\n3. Zero Exponent: x^0 = 1\n4. Negative Exponent: x^-n = 1/x^n",,,,3
+chem-c001,chem-t001-s001,introduction,Tiny Building Blocks,Everything is made of atoms. They are mostly empty space!,,,,1
+chem-c002,chem-t001-s001,concept_helper,Shell Model,Imagine electrons orbiting the nucleus like planets around the sun (Bohr Model).,,,,2
+chem-ho001,chem-t001-s001,text,Handout: The Atom,"1. Protons: Positive (+), in Nucleus, Mass=1\n2. Neutrons: Neutral (0), in Nucleus, Mass=1\n3. Electrons: Negative (-), in Shells, Mass≈0\n4. Atomic Number = # of Protons",,,,3
+bio-c001,bio-t001-s001,introduction,Life's Building Blocks,Cells are the smallest unit of life. You are made of trillions of them!,,,,1
+bio-c002,bio-t001-s001,concept_helper,Plant vs. Animal,Remember: Plants are rigid (Cell Wall) and green (Chloroplasts). Animals are squishy!,,,,2
+bio-ho001,bio-t001-s001,text,Handout: Cell Organelles,"1. Nucleus: Boss/Brain (DNA)\n2. Mitochondria: Powerhouse (Energy)\n3. Ribosome: Protein Factory\n4. Chloroplast: Solar Panel (Plants only)\n5. Cell Membrane: Gatekeeper",,,,3

@@ -1,0 +1,41 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+phys-q001,phys-t001,What is the unit of Force?,Joules,Newtons,Watts,Meters,B,Force is measured in Newtons (N).,easy,Named after Isaac Newton.,10
+phys-q002,phys-t001,F = ma is the mathematical representation of which Law?,First Law,Second Law,Third Law,Law of Gravitation,B,Newton's Second Law relates Force Mass and Acceleration.,easy,The one about acceleration.,10
+phys-q003,phys-t001,Newton's First Law is also known as the Law of:,Inertia,Momentum,Friction,Energy,A,Objects tend to resist changes in their state of motion (inertia).,easy,Starts with 'I'.,10
+phys-q004,phys-t001,"For every action, there is an equal and opposite:",Reaction,Force,Acceleration,Velocity,A,Newton's Third Law states action and reaction are equal and opposite.,easy,Opposite of action.,10
+phys-q005,phys-t001,"If a force of 50N acts on a 10kg mass, what is the acceleration?",500 m/s²,0.2 m/s²,5 m/s²,50 m/s²,C,a = F/m = 50/10 = 5 m/s².,medium,Divide force by mass.,15
+phys-q006,phys-t001,Which object has the most inertia?,A feather,A baseball,A car,A train,D,Inertia depends on mass. The train has the most mass.,medium,Which one is heaviest?,15
+phys-q007,phys-t001,"If you double the mass but keep force constant, acceleration:",Doubles,Halves,Stays the same,Quadruples,B,Acceleration is inversely proportional to mass (a = F/m).,medium,More mass means harder to move.,15
+phys-q008,phys-t001,A rocket launching is an example of which law?,First,Second,Third,None,C,"The rocket pushes gas down (action), gas pushes rocket up (reaction).",medium,Action and reaction.,15
+phys-q009,phys-t001,An object at rest will stay at rest unless acted upon by:,A balanced force,An unbalanced force,Friction,Gravity,B,Unbalanced forces cause changes in motion.,hard,Forces must be unequal.,20
+phys-q010,phys-t001,What is the weight of a 10kg object on Earth (g=9.8 m/s²)?,10 N,98 N,9.8 N,100 N,B,W = mg = 10 * 9.8 = 98 N.,hard,Multiply mass by gravity.,20
+math-q001,math-t001,What is 2^3?,6,8,9,5,B,2 * 2 * 2 = 8,easy,Multiply 2 three times.,10
+math-q002,math-t001,Any number to the power of 0 is:,0,1,The number itself,Undefined,B,x^0 = 1 for any x != 0.,easy,It's always unity.,10
+math-q003,math-t001,What is 5^2?,10,25,15,7,B,5 * 5 = 25,easy,Five squared.,10
+math-q004,math-t001,Simplify: x^2 * x^3,x^6,x^5,2x^5,x,B,Add exponents: 2 + 3 = 5.,medium,Add the powers.,15
+math-q005,math-t001,Simplify: (x^2)^3,x^5,x^6,x^8,3x^2,B,Multiply exponents: 2 * 3 = 6.,medium,Multiply the powers.,15
+math-q006,math-t001,What is 10^-2?,-20,0.01,0.1,-100,B,1 / 10^2 = 1/100 = 0.01,medium,Negative exponent means reciprocal.,15
+math-q007,math-t001,Evaluate 4^0 + 4^1,5,8,4,0,A,1 + 4 = 5,medium,1 plus 4.,15
+math-q008,math-t001,What is the square root of 144?,10,11,12,14,C,12 * 12 = 144,hard,multply 12 by 12,20
+math-q009,math-t001,Simplify: x^5 / x^2,x^3,x^2.5,x^7,x^10,A,Subtract exponents: 5 - 2 = 3.,hard,Subtract the bottom power from the top.,20
+math-q010,math-t001,If 2^x = 16 what is x?,2,3,4,5,C,2*2*2*2 = 16 (4 times).,hard,How many 2s multiply to 16?,20
+chem-q001,chem-t001,The center of an atom is called the:,Electron,Nucleus,Shell,Orbit,B,The nucleus contains protons and neutrons.,easy,The core.,10
+chem-q002,chem-t001,Electrons have a charge of:,Positive,Negative,Neutral,Variable,B,Electrons are negatively charged.,easy,Opposite of protons.,10
+chem-q003,chem-t001,Protons have a charge of:,Positive,Negative,Neutral,Variable,A,Protons are positively charged.,easy,P for Positive.,10
+chem-q004,chem-t001,Neutrons are found in the:,Orbitals,Nucleus,Outside,Energy Levels,B,Neutrons reside in the nucleus with protons.,medium,Center of the atom.,15
+chem-q005,chem-t001,Which particle has almost no mass?,Proton,Neutron,Electron,Atom,C,Electrons are extremely tiny compared to nucleons.,medium,Only about 1/1840 of a proton.,15
+chem-q006,chem-t001,The atomic number tells you the number of:,Neutrons,Protons,Electrons,Isotopes,B,Atomic number = number of protons.,medium,It defines the element.,15
+chem-q007,chem-t001,Isotopes have different numbers of:,Protons,Neutrons,Electrons,Shells,B,Same protons different neutrons.,medium,Changes the mass not the element.,15
+chem-q008,chem-t001,The first electron shell holds max:,2,8,18,32,A,The innermost shell holds up to 2 electrons.,hard,A small pair.,20
+chem-q009,chem-t001,What is the mass number?,Protons only,Neutrons only,Protons + Neutrons,Electrons + Protons,C,Mass number is the sum of nucleons.,hard,Everything in the nucleus.,20
+chem-q010,chem-t001,Carbon-12 and Carbon-14 are:,Ions,Isotopes,Different elements,Molecues,B,Same element different mass.,hard,Variations of the same element.,20
+bio-q001,bio-t001,The powerhouse of the cell is the:,Nucleus,Mitochondria,Ribosome,Vacuole,B,Mitochondria produce energy (ATP).,easy,Power plant.,10
+bio-q002,bio-t001,The control center of the cell is the:,Nucleus,Mitochondria,Membrane,Wall,A,The nucleus contains DNA and controls activities.,easy,The brain of the cell.,10
+bio-q003,bio-t001,"Plant cells have this, but animal cells don't:",Nucleus,Mitochondria,Cell Wall,Ribosome,C,Cell walls provide rigid structure to plants.,easy,Outer rigid layer.,10
+bio-q004,bio-t001,Photosynthesis happens in the:,Mitochondria,Chloroplast,Nucleus,Vacuole,B,Chloroplasts contain chlorophyll for photosynthesis.,medium,Green parts.,15
+bio-q005,bio-t001,Ribosomes are responsible for making:,Lipids,Proteins,Sugar,DNA,B,Ribosomes synthesize proteins.,medium,Building blocks of life.,15
+bio-q006,bio-t001,The cell membrane is:,Rigid,Permeable,Semi-permeable,Solid,C,It controls what enters and exits.,medium,Selective gatekeeper.,15
+bio-q007,bio-t001,Which organelle stores water and waste?,Vacuole,Lysosome,Golgi,ER,A,Vacuoles are storage sacs.,medium,Like a vacuum bag.,15
+bio-q008,bio-t001,Prokaryotic cells lack a:,Cell membrane,Nucleus,Ribosome,DNA,B,Prokaryotes (like bacteria) have no distinct nucleus.,hard,Pro = No.,20
+bio-q009,bio-t001,The jelly-like substance inside the cell:,Cytoplasm,Plasma,Blood,Water,A,Cytoplasm fills the cell.,hard,Cyto-something.,20
+bio-q010,bio-t001,Diffusion moves particles from:,Low to High concentration,High to Low concentration,Randomly,They don't move,B,Natural spreading out of particles.,hard,Crowded to less crowded.,20

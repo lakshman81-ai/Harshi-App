@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  color: #1e293b;
+  /* slate-800 default for light mode safety */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Handout/Print styles - Hide learning objectives and quiz sections */
+@media print {
+
+  .hide-in-handout,
+  .objectives-block,
+  .quiz-section {
+    display: none !important;
+  }
+
+  /* Hide navigation and sidebars when printing */
+  aside,
+  nav,
+  header,
+  .floating-navigation {
+    display: none !important;
+  }
+}
+
+/* Utility class to hide content in handout mode */
+.handout-mode .hide-in-handout,
+.handout-mode .objectives-block,
+.handout-mode .quiz-section {
+  display: none !important;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Specifically disable slide-up animation */
+  .animate-slide-up {
+    animation: none !important;
+  }
+
+  /* Disable spinner animations */
+  .animate-spin {
+    animation: none !important;
+  }
+}
+
+/* Standardize selection style to avoid "blue block" glitches */
+::selection {
+  background-color: #3b82f6;
+  /* blue-500 */
+  color: white;
+}
+
+/* Specific fix for text rendering */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div {
+  background-color: transparent;
+  /* Prevent inherited backgrounds on text */
+}

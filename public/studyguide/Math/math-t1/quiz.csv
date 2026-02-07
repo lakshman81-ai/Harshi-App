@@ -1,0 +1,5 @@
+id,subtopic_id,type,question,options,answer,explanation,hint
+q-1,sec-expand,mcq,What is the result of 3(x + 4)?,3x + 4|3x + 12|x + 12|3x + 7,3x + 12,Multiply 3 by both x and 4.,Remember to distribute to BOTH terms.
+q-2,sec-intro,true_false,A variable handles value that can change.,True|False,True,Variables represent unknown or changing values.,Think about the name 'vary'.
+q-3,sec-intro,fill_blank,In the term 5x, the number 5 is called the _______.,,coefficient,The number multiplying the variable.,Starts with 'c'.
+q-4,sec-intro,matching,Match the term with definition.,Variable:Unknown Value|Constant:Fixed Value|Coefficient:Multiplier,Variable:Unknown Value|Constant:Fixed Value|Coefficient:Multiplier,,Match each part.

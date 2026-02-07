@@ -1,0 +1,8 @@
+content_id,section_id,content_type,content_title,content_text,explanation,common_misconception,correction,order_index
+intro-eng-1,eng-sec-1,text,Introduction,Tenses indicate the time of an action.,,,,1
+term-eng-t1-1,eng-sec-1,key_term,Present Perfect Tense,"A tense used for actions that occurred at an indefinite time in the past (e.g., 'I have eaten').",,,,2
+term-eng-t1-2,eng-sec-1,key_term,Past Continuous Tense,"A tense used to describe actions that were in progress at a specific time in the past (e.g., 'I was eating').",,,,3
+term-eng-t1-3,eng-sec-1,key_term,Auxiliary Verb,"A helping verb (like be, do, have) used with a main verb to express tense, mood, or voice.",,,,4
+term-eng-t1-4,eng-sec-1,key_term,Infinitive,"The base form of a verb, often preceded by 'to' (e.g., 'to go').",,,,5
+misc-eng-t1-1,eng-sec-1,misconception,Double Past Tense,"Students often say 'I didn't went' or 'Did you saw him?'.",The auxiliary 'did' already carries the past tense marker.,"The main verb must return to its base form. Correct: 'I didn't go' and 'Did you see him?'.",6
+misc-eng-t1-2,eng-sec-1,misconception,Since vs For,"Students confuse 'since' and 'for' (e.g., 'I have lived here since 5 years').",'Since' points to a starting point; 'For' points to a duration.,"Correct: 'I have lived here FOR 5 years' or 'SINCE 2020'.",7

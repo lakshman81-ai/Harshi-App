@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-chem-t3-1,chem-t3,"In a covalent bond, electrons are...",Transferred,Destroyed,Shared,Doubled,C,Co-valent means sharing valence electrons.,,,10
+quiz-chem-t3-2,chem-t3,Ionic bonds occur between...,Two metals,Two non-metals,Metal and Non-metal,Noble gases,C,"Opposites attract (Metal loses, Non-metal gains).",,,10
+quiz-chem-t3-3,chem-t3,What charge does an atom get if it loses an electron?,Positive,Negative,Neutral,Unknown,A,Losing a negative electron leaves a net positive charge.,,,10
+quiz-chem-t3-4,chem-t3,NaCl (Table Salt) is...,Covalent,Ionic,Metallic,Magnetic,B,Sodium (Metal) + Chlorine (Non-Metal).,,,10
+quiz-chem-t3-5,chem-t3,Why do atoms bond?,To get bigger,To become unstable,To fill outer shell,To change element,C,Full outer shell means stability.,,,10

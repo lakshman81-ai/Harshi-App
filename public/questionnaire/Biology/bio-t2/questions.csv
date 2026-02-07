@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-bio-t2-1,bio-t2,What molecule carries genetic info?,Protein,Carbohydrate,DNA,Lipid,C,Deoxyribonucleic Acid.,,,10
+quiz-bio-t2-2,bio-t2,Shape of DNA?,Single Helix,Double Helix,Circle,Square,B,Twisted ladder shape.,,,10
+quiz-bio-t2-3,bio-t2,"If B is Brown (dominant) and b is blue (recessive), what is Bb?",Blue,Brown,Green,Mix,B,Dominant B masks recessive b.,,,10
+quiz-bio-t2-4,bio-t2,Physical appearance is called...,Genotype,Phenotype,Karyotype,Biotype,B,Pheno = Physical.,,,10
+quiz-bio-t2-5,bio-t2,Probability of bb from Bb x Bb?,0%,25%,50%,100%,B,1 out of 4 squares will be bb.,,,10

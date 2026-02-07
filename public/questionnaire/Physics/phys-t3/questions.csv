@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-phys-t3-1,phys-t3,What flows in a circuit?,Protons,Neutrons,Electrons,Atoms,C,Current is the flow of electrons.,,,10
+quiz-phys-t3-2,phys-t3,In which circuit type do all lights go out if one breaks?,Parallel,Series,Open,Short,B,Series circuits have only one path.,,,10
+quiz-phys-t3-3,phys-t3,"If V=12V and R=4Ω, what is the Current?",3 A,48 A,0.33 A,16 A,A,I = V/R = 12/4 = 3 Amps.,,,10
+quiz-phys-t3-4,phys-t3,What unit measures Resistance?,Volt,Amp,Ohm,Watt,C,Ohms (Ω) measure resistance.,,,10
+quiz-phys-t3-5,phys-t3,What happens to current if resistance increases (Voltage constant)?,Increases,Decreases,Stays same,Becomes zero,B,Current and Resistance are inversely proportional.,,,10

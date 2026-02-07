@@ -1,0 +1,3 @@
+id,subtopic_id,title,explanation,wrong_example,correct_example
+misc-1,sec-expand,Distributing Only the First Term,Students often multiply only the first term inside the parenthesis.,2(x + 3) = 2x + 3,2(x + 3) = 2x + 6
+misc-2,sec-intro,Confusing Variable and Constant,Thinking a letter is always a specific number like x = 10.,x is always 10,x can vary

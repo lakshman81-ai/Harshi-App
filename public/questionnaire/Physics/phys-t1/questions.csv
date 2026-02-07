@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-phys-t1-1,phys-t1,Which property of an object determines its inertia?,Volume,Mass,Weight,Velocity,B,Mass is a direct measure of inertia.,,,10
+quiz-phys-t1-2,phys-t1,"If you double the force on an object, what happens to its acceleration?",Doubles,Halves,Quadruples,Stays same,A,Acceleration is directly proportional to force (F=ma).,,,10
+quiz-phys-t1-3,phys-t1,A 10kg object accelerates at 2 m/s². What is the force?,5 N,12 N,20 N,0.2 N,C,F = m * a = 10 * 2 = 20 N.,,,10
+quiz-phys-t1-4,phys-t1,Which law explains why a book sits still on a table?,1st Law,2nd Law,3rd Law,Gravitational Law,A,1st Law: Objects at rest stay at rest unless acted on by unbalanced force.,,,10
+quiz-phys-t1-5,phys-t1,Action and reaction forces are always...,Unequal,In the same direction,Acting on the same object,Equal and opposite,D,Newton's 3rd Law states they are equal in magnitude and opposite in direction.,,,10

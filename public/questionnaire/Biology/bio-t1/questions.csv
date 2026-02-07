@@ -1,0 +1,7 @@
+id,question_type,question,options,correct_answer,accepted_answers,hint,explanation,difficulty,xp_reward
+bio-q1,mcq,Which organelle is known as the powerhouse of the cell?,Nucleus|Mitochondria|Ribosome|Cytoplasm,B,,It generates most of the cell's supply of adenosine triphosphate (ATP).,Mitochondria are responsible for cellular respiration and energy production.,easy,10
+bio-q2,mcq,What is the basic structural and functional unit of life?,Tissue|Organ|Cell|Organism,C,,All living things are made of these.,The cell is the smallest unit that can perform all life processes.,easy,10
+bio-q3,true_false,Plant cells lack a cell wall.,True|False,False,,Think about what gives plants their rigid structure.,Plant cells have a rigid cell wall made of cellulose; animal cells do not.,medium,10
+bio-q4,fill_blank,The control center of the cell that contains DNA is the _______.,,,Nucleus|nucleous,It starts with 'N'.,The nucleus directs cell activities and contains genetic material.,medium,15
+bio-q5,matching,Match the organelle with its function.,"Nucleus:Control Center|Mitochondria:Powerhouse|Ribosome:Protein Factory|Chloroplast:Photosynthesis","Nucleus:Control Center|Mitochondria:Powerhouse|Ribosome:Protein Factory|Chloroplast:Photosynthesis",,Match each structure to its job.,Nucleus controls, Mitochondria powers, Ribosomes build proteins, Chloroplasts make food.,hard,20
+bio-q6,true_false,All bacteria are harmful to humans.,True|False,False,,Think about yogurt or digestion.,Many bacteria are improved for digestion and food production (like probiotics).,easy,10

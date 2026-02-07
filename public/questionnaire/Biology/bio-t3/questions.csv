@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-bio-t3-1,bio-t3,Which is an abiotic factor?,Tree,Bacteria,Sunlight,Wolf,C,Sunlight is non-living.,,,10
+quiz-bio-t3-2,bio-t3,Organisms that make their own food are...,Consumers,Producers,Decomposers,Predators,B,Producers (plants) use photosynthesis.,,,10
+quiz-bio-t3-3,bio-t3,How much energy is passed to the next level?,100%,50%,10%,0%,C,10% rule. Rest is lost as heat.,,,10
+quiz-bio-t3-4,bio-t3,A network of interconnected food chains is a...,Food Web,Pyramid,Cycle,Biome,A,Web implies multiple connections.,,,10
+quiz-bio-t3-5,bio-t3,What is the primary source of energy for Earth?,The Moon,Volcanoes,The Sun,Wind,C,Sunlight drives photosynthesis.,,,10

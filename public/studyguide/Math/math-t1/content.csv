@@ -1,0 +1,44 @@
+content_id,section_id,content_type,content_title,content_text,explanation,common_misconception,correction,order_index
+intro-1,sec-intro,text,Introduction to Algebra,"Algebra is a branch of mathematics that uses symbols, letters, and numbers to represent quantities and relationships. It allows us to solve problems where some values are unknown.",,,,1
+intro-2,sec-intro,text,Key Vocabulary,"- **Variable**: A letter (like x or y) representing an unknown value.
+- **Constant**: A fixed value (like 5 or -3).
+- **Coefficient**: The number multiplying a variable (in 3x, 3 is the coefficient).
+- **Term**: A number, variable, or product of numbers and variables separated by + or -.",,,,2
+simp-1,sec-combine,text,Combining Like Terms,"To simplify an algebraic expression, we combine ""like terms"". Like terms are terms that have the exact same variable part.
+
+Example: 3x + 2x = 5x
+Non-Example: 3x + 2y (Cannot be combined)",,,,1
+simp-2,sec-combine,text,Step-by-Step Example,"Simplify: 4x + 3y - 2x + 5
+
+1. Group like terms: (4x - 2x) + 3y + 5
+2. Combine coefficients: (4-2)x + 3y + 5
+3. Final Answer: 2x + 3y + 5",,,,2
+simp-3,sec-combine,text,Important Rule,"When combining terms, always keep the sign (+ or -) that is in front of the term.",,,,3
+exp-1,sec-expand,text,The Distributive Property,"Expanding an expression often involves using the distributive property: a(b + c) = ab + ac.
+
+Multiplying the term outside the parenthesis by EVERY term inside.",,,,1
+exp-2,sec-expand,text,Example: Expansion,"Expand: 3(x + 4)
+
+Calculation:
+3 * x = 3x
+3 * 4 = 12
+
+Result: 3x + 12",,,,2
+exp-3,sec-expand,text,Factoring Expressions,"Factoring is the reverse of expanding. It means writing an expression as a product of its factors.
+
+Example: Factor 6x + 9
+1. Find GCF of 6x and 9 -> 3
+2. Divide each term by 3: 6x/3 = 2x, 9/3 = 3
+3. Write as product: 3(2x + 3)",,,,3
+term-1,sec-review,key_term,Variable,A letter used to represent an unknown number or a number that can change.,,,,1
+term-2,sec-review,key_term,Coefficient,The numerical factor of a term that contains a variable.,,,,2
+term-3,sec-review,key_term,Like Terms,Terms that have the exact same variable parts.,,,,3
+term-4,sec-review,key_term,Constant,A fixed value that does not change.,,,,4
+term-5,sec-review,key_term,Expression,A mathematical phrase that can contain numbers, variables, and operators.,,,,5
+term-6,sec-review,key_term,Distributive Property,The rule that a(b+c) = ab + ac.,,,,6
+term-7,sec-review,key_term,Binomial,An algebraic expression with two terms.,,,,7
+misc-1,sec-review,misconception,Adding Unlike Terms,"Students often add 2x + 3y to get 5xy.",You cannot combine terms with different variables.,Terms must have identical variable parts. 2x + 3y remains 2x + 3y.,8
+misc-2,sec-review,misconception,Distribution Error,"Students write 3(x + 2) as 3x + 2, forgetting to multiply the second term.",The number outside must multiply EVERY term inside.,It should be 3(x) + 3(2) = 3x + 6.,9
+misc-3,sec-review,misconception,Subtracting Negatives,Students treat 5 - (-3) as 5 - 3 = 2.,Subtracting a negative is the same as adding a positive.,5 - (-3) becomes 5 + 3 = 8.,10
+misc-4,sec-review,misconception,Power Rules,"Students think (x^2)^3 is x^5 (adding exponents).",Power to a power means you MULTIPLY the exponents.,(x^2)^3 = x^(2*3) = x^6.,11
+misc-5,sec-review,misconception,Square of a Sum,"Students think (x+3)^2 = x^2 + 9.","Squaring a binomial requires FOIL (First, Outer, Inner, Last).",(x+3)^2 = (x+3)(x+3) = x^2 + 6x + 9.,12

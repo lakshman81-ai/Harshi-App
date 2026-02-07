@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-phys-t2-1,phys-t2,What is the unit for Work?,Newton,Watt,Joule,Meter,C,Work is measured in Joules (N·m).,,,10
+quiz-phys-t2-2,phys-t2,A ball held 2m high has what type of energy?,Kinetic,Gravitational Potential,Elastic,Thermal,B,It has potential due to gravity.,,,10
+quiz-phys-t2-3,phys-t2,"If you lift a 5kg box 2 meters, how much work did you do? (g=10)",10 J,50 J,100 J,7 J,C,W = Fd = mgd = 5 * 10 * 2 = 100 J.,,,10
+quiz-phys-t2-4,phys-t2,Energy of motion is called...,Potential,Kinetic,Thermal,Chemical,B,"Kinetic comes from the Greek word ""kinesis"" (motion).",,,10
+quiz-phys-t2-5,phys-t2,Can energy be destroyed?,"Yes, by friction","Yes, in black holes","No, only transformed","No, except nuclear",C,Law of Conservation of Energy states it cannot be created or destroyed.,,,10

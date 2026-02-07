@@ -1,0 +1,5 @@
+section_id,topic_id,section_title,section_icon,section_type,order_index
+sec-intro,math-t1,Introduction to Algebra,BookOpen,content,1
+sec-combine,math-t1,Simplifying Expressions,Calculator,content,2
+sec-expand,math-t1,Expanding & Factoring,Maximize,content,3
+sec-review,math-t1,Key Terms & Misconceptions,Award,content,4

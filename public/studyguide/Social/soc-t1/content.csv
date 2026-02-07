@@ -1,0 +1,8 @@
+content_id,section_id,content_type,content_title,content_text,explanation,common_misconception,correction,order_index
+intro-soc-1,soc-sec-1,text,Introduction,"Resources are things that satisfy our needs.",,,,1
+term-soc-t1-1,soc-sec-2,key_term,Resource,Anything that can be used to satisfy a need.,,,,2
+term-soc-t1-2,soc-sec-2,key_term,Abiotic Resource,"Resources that are non-living (e.g., soils, rocks, minerals).",,,,3
+term-soc-t1-3,soc-sec-2,key_term,Renewable Resource,Resources which get renewed or replenished quickly.,,,,4
+term-soc-t1-4,soc-sec-2,key_term,Sustainable Development,Development that meets the needs of the present without compromising the ability of future generations to meet their own needs.,,,,5
+misc-soc-t1-1,soc-sec-2,misconception,Free Gifts of Nature,"Students think resources are simply free gifts available for unlimited use.",Natural resources are not free gifts; they are a function of human activities.,"Resources require time, technology, and effort to transform into useful substances.",6
+misc-soc-t1-2,soc-sec-2,misconception,Renewable equals Unlimited,"Students think all renewable resources are unlimited.",Water seems unlimited but shortage is a major problem.,"Careless use of certain renewable resources like water, soil and forest can affect their stock.",7

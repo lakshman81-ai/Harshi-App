@@ -1,0 +1,6 @@
+content_id,content_type,title,content,url,order_index
+term-chem-t3-1,key_term,Ion,Atom with a charge (lost or gained electrons),,
+term-chem-t3-2,key_term,Molecule,Group of atoms bonded together,,
+term-chem-t3-3,key_term,Ionic Bond,Transfer of electrons (Metal + Non-Metal),,
+term-chem-t3-4,key_term,Covalent Bond,Sharing of electrons (Non-Metal + Non-Metal),,
+term-chem-t3-5,key_term,Valence Shell,Outermost electron shell,,

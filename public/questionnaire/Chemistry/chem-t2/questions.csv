@@ -1,0 +1,6 @@
+question_id,topic_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,difficulty,hint,xp_reward
+quiz-chem-t2-1,chem-t2,Elements in the same column usually have...,Same mass,Similar properties,Same atomic number,Different states,B,Groups (columns) share chemical properties.,,,10
+quiz-chem-t2-2,chem-t2,Which group contains the Noble Gases?,1,2,17,18,D,Group 18 (far right) are Noble Gases.,,,10
+quiz-chem-t2-3,chem-t2,Where are metals found on the table?,Left,Right,Top only,Bottom only,A,Metals make up the majority of the left side.,,,10
+quiz-chem-t2-4,chem-t2,Horizontal rows are called...,Groups,Families,Periods,Sections,C,Periods go across.,,,10
+quiz-chem-t2-5,chem-t2,Which element is a non-metal in Group 1?,Lithium,Sodium,Hydrogen,Potassium,C,Hydrogen is the exception.,,,10

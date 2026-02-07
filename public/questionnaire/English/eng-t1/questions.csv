@@ -1,0 +1,7 @@
+id,question_type,question,options,correct_answer,accepted_answers,hint,explanation,difficulty,xp_reward
+eng-q1,mcq,Which option correctly completes the sentence: 'We _______ a movie yesterday.',watch|watched|have watched|watching,B,,Yesterday indicates past time.,Use the simple past tense 'watched' for completed actions in the past.,easy,10
+eng-q2,mcq,Identify the tense: 'She is reading a book.',Present Simple|Present Continuous|Past Continuous|Future Simple,B,,"is + -ing" form.,Present Continuous is used for actions happening right now.,easy,10
+eng-q3,true_false,"The sentence 'They didn't went to the park' is grammatically correct.",True|False,False,,Think about the rule for 'did'.,After 'did', we always use the base form of the verb (go), so it should be 'didn't go'.,medium,10
+eng-q4,fill_blank,She has _______ to Paris twice.,,,been|gone,Past participle of 'go' or 'be'.,Present Perfect tense uses 'has/have' + past participle.,medium,15
+eng-q5,matching,Match the tense with its typical usage.,"Present Simple:Habits and facts|Past Continuous:Action in progress in past|Present Perfect:Life experience|Future Simple:Prediction","Present Simple:Habits and facts|Past Continuous:Action in progress in past|Present Perfect:Life experience|Future Simple:Prediction",,Match time and action nature.,Simple for habits, Continuous for progress, Perfect for experience.,hard,20
+eng-q6,true_false,"Water boils at 100 degrees Celsius" is in Present Simple tense.,True|False,True,,Is it a general fact?,General truths and scientific facts use Present Simple.,easy,10

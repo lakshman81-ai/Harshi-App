@@ -1,0 +1,8 @@
+content_id,content_type,title,content,url,order_index
+form-math-t3-1,formula,Probability,P(A) = \frac{n(A)}{n(S)},,
+form-math-t3-2,formula,Independent Events,P(A \cap B) = P(A) \times P(B),,
+term-math-t3-1,key_term,Event,An outcome or set of outcomes,,
+term-math-t3-2,key_term,Sample Space,Set of all possible outcomes,,
+term-math-t3-3,key_term,Impossible,Probability of 0,,
+term-math-t3-4,key_term,Certain,Probability of 1 (or 100%),,
+term-math-t3-5,key_term,Independent Events,Events where one outcome does not affect the other,,
