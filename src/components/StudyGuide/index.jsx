@@ -95,19 +95,22 @@ const StudyGuide = memo(({
 
   // Derived values
   const currentSection = topicSections[activeSection];
-  const sectionContent = currentSection
-    ? (studyContent?.[currentSection.id] || DEFAULT_CONTENT?.[currentSection.id] || [])
-    : [];
+
+  // Memoize section content to stabilize dependencies
+  const sectionContent = useMemo(() =>
+    currentSection
+      ? (studyContent?.[currentSection.id] || DEFAULT_CONTENT?.[currentSection.id] || [])
+      : [],
+    [currentSection, studyContent, DEFAULT_CONTENT]
+  );
+
   const progressPercent = progress?.topics?.[topicKey]?.progress || 0;
   const xpEarned = progress?.topics?.[topicKey]?.xp || 0;
-  const bookmarks = progress?.bookmarks || [];
-  const userNotes = progress?.notes?.[topicKey] || '';
 
-  // Memoize topic-specific bookmarks to avoid recalculation on every render
-  const topicBookmarks = useMemo(
-    () => bookmarks.filter(b => b.startsWith(topicKey)),
-    [bookmarks, topicKey]
-  );
+  // Memoize bookmarks to avoid recalculation on every render
+  const bookmarks = useMemo(() => progress?.bookmarks || [], [progress?.bookmarks]);
+
+  const userNotes = progress?.notes?.[topicKey] || '';
 
   const isBookmarked = useMemo(
     () => currentSection && bookmarks.includes(`${topicKey}-${currentSection.id}`),

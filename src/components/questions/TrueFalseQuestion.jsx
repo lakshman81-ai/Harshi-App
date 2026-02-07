@@ -75,7 +75,7 @@ const TrueFalseQuestion = ({
                     onClick={() => handleSelect(true)}
                     disabled={disabled || showResult}
                     className={buttonClass(true)}
-                    aria-label="True"
+                    aria-label="Answer True"
                 >
                     <Check className="w-5 h-5" />
                     TRUE
@@ -84,7 +84,7 @@ const TrueFalseQuestion = ({
                     onClick={() => handleSelect(false)}
                     disabled={disabled || showResult}
                     className={buttonClass(false)}
-                    aria-label="False"
+                    aria-label="Answer False"
                 >
                     <X className="w-5 h-5" />
                     FALSE
