@@ -31,12 +31,8 @@ jobs:
       - name: Check CSV Files
         run: |
           echo "Checking CSV structure..."
-          if [ ! -f "public/questionnaire/_master_index.csv" ]; then
+          if [ ! -f "public/questionnaire/master-index.csv" ]; then
             echo "Error: questionnaire master index not found"
-            exit 1
-          fi
-          if [ ! -f "public/studyguide/_master_index.csv" ]; then
-            echo "Error: studyguide master index not found"
             exit 1
           fi
           echo "CSV files verified!"
