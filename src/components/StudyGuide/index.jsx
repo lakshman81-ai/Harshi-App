@@ -114,6 +114,9 @@ const StudyGuide = memo(({
   const [xpGain, setXpGain] = useState(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
 
+  // Per-section progress tracking
+  const [sectionProgress, setSectionProgress] = useState({});
+
   // Derived values
   const currentSection = topicSections[activeSection];
 
@@ -217,6 +220,54 @@ const StudyGuide = memo(({
       setTimeout(() => setXpGain(null), 1500);
     }
   }, [progress, topicKey, topicSections.length, updateProgress]);
+
+  // Track page read status
+  useEffect(() => {
+      if (isAtBottom && currentSection) {
+          setSectionProgress(prev => {
+              const current = prev[currentSection.id] || {};
+              if (current.read) return prev; // No change
+              return {
+                  ...prev,
+                  [currentSection.id]: { ...current, read: true }
+              };
+          });
+      }
+  }, [isAtBottom, currentSection]);
+
+  // Handle Concept Check Passed
+  const handleConceptCheckComplete = useCallback((passed) => {
+      if (!currentSection) return;
+      if (passed) {
+          setSectionProgress(prev => {
+              const current = prev[currentSection.id] || {};
+              if (current.quizPassed) return prev;
+              return {
+                  ...prev,
+                  [currentSection.id]: { ...current, quizPassed: true }
+              };
+          });
+      }
+  }, [currentSection]);
+
+  // Computed completed sections set
+  const completedSections = useMemo(() => {
+      const completed = new Set();
+      Object.entries(sectionProgress).forEach(([id, status]) => {
+          // Check if section has quiz file. `topicSections` has `questions_file` info.
+          const section = topicSections.find(s => s.id === id);
+          if (!section) return;
+
+          const hasQuiz = !!section.questions_file;
+
+          // Condition: Read AND (QuizPassed OR NoQuiz)
+          if (status.read && (!hasQuiz || status.quizPassed)) {
+              completed.add(id);
+          }
+      });
+      return completed;
+  }, [sectionProgress, topicSections]);
+
 
   // Keyboard navigation
   useEffect(() => {
@@ -431,6 +482,7 @@ const StudyGuide = memo(({
                 onSelectSection={handleSelectSection}
                 ICON_MAP={ICON_MAP}
                 IconComponent={IconComponent}
+                completedSections={completedSections}
               />
 
               {/* Content Area */}
@@ -446,6 +498,7 @@ const StudyGuide = memo(({
                   userXp={progress?.xp || 0}
                   topicId={topicKey}
                   onQuizComplete={handleQuizComplete}
+                  onConceptCheckComplete={handleConceptCheckComplete}
                   onUseHint={handleUseHint}
                   contentRef={contentRef}
                   onScrollStateChange={setIsAtBottom}
@@ -536,6 +589,7 @@ const StudyGuide = memo(({
         onClose={() => setShowMobileSidebar(false)}
         onSelectSection={handleSelectSection}
         ICON_MAP={ICON_MAP}
+        completedSections={completedSections}
       />
 
       {/* Key Terms Drawer */}

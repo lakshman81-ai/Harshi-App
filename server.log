@@ -1,0 +1,4 @@
+Server Root: /app
+Public Dir: /app/public
+Backend API running on http://localhost:3001
+Serving/Managing files in: /app/public
