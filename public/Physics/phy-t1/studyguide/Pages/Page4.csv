@@ -1,0 +1,4 @@
+section_id,content_type,content_title,content_text,explanation,common_misconception,correction,order_index,image_url
+vis-phy-t1-1,visualization,Force Diagrams,"Free body diagrams help visualize all forces acting on an object.",,,,1,https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Free_body_diagram_2.svg/320px-Free_body_diagram_2.svg.png
+app-phy-t1-2,application,Rockets,Rockets use Newton's 3rd Law: Action (exhaust) = Reaction (thrust).,,,,2,
+msg-phy-t1-1,text,Summary,Newton's Laws govern all classical motion.,,,,3,

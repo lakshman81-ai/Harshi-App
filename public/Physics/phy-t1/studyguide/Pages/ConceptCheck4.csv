@@ -1,0 +1,6 @@
+question_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation
+cc-6,Action and Reaction forces are?,Equal and opposite,Unequal,In same direction,Unrelated,A,Newton's 3rd Law states they are equal and opposite.
+cc-7,Do action-reaction forces cancel out?,Yes,No,Only in vacuum,Depends on mass,B,No, because they act on different objects.
+cc-8,Which law explains rocket propulsion?,1st,2nd,3rd,Law of Gravitation,C,Action (gas out) causes Reaction (rocket up).
+cc-9,In a free body diagram, arrows represent?,Velocity,Acceleration,Forces,Energy,C,Arrows show direction and magnitude of forces.
+cc-10,If you push a wall, the wall pushes back with?,Less force,More force,Zero force,Equal force,D,Equal and opposite reaction.

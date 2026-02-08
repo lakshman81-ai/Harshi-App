@@ -1,9 +1,10 @@
-import React, { memo, useState } from 'react';
-import { BookOpen, Star, Flame, CheckCircle2, Clock, Sun, Moon, Settings, Trophy, Terminal } from 'lucide-react';
+import React, { memo, useState, useEffect } from 'react';
+import { BookOpen, Star, Flame, CheckCircle2, Clock, Sun, Moon, Settings, Trophy, Terminal, Edit, AlertTriangle } from 'lucide-react';
 import { useStudy } from '../contexts/StudyContext';
 import { useData } from '../contexts/DataContext';
 import { cn } from '../utils';
 import { Logger } from '../services/Logger';
+import { csvService } from '../services/unifiedDataService'; // Explicit import
 
 import { ICON_MAP, calculateLevel, countCompletedTopics, formatStudyTime, calculateSubjectProgress, AVATAR_MAP } from '../constants';
 import { SyncStatusBadge, Card, ProgressRing } from './common/UIComponents';
@@ -16,6 +17,8 @@ import DailyChallengeModal from './modals/DailyChallengeModal';
 import QAStatsModal from './modals/QAStatsModal';
 import LogsModal from './modals/LogsModal';
 import AdminPanelModal from './modals/AdminPanelModal';
+import ContentManager from './ContentManager'; // New Content Manager
+
 import { BarChart2, Wrench } from 'lucide-react';
 
 const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
@@ -27,6 +30,36 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
     const [showQAStats, setShowQAStats] = useState(false);
     const [showLogs, setShowLogs] = useState(false);
     const [showAdminPanel, setShowAdminPanel] = useState(false);
+    const [showContentManager, setShowContentManager] = useState(false);
+
+    // Validation State
+    const [validationIssues, setValidationIssues] = useState([]);
+    const [validationStatus, setValidationStatus] = useState('ok'); // 'ok' | 'warning' | 'error'
+
+    // Run Startup Validation
+    useEffect(() => {
+        const runValidation = async () => {
+            if (await csvService.checkBackendStatus()) {
+                try {
+                    const res = await fetch(`${csvService.API_URL}/validate`);
+                    if (res.ok) {
+                        const report = await res.json();
+                        // If we have errors or warnings, set status
+                        if (report.errors && report.errors.length > 0) {
+                            setValidationStatus('error');
+                            setValidationIssues(report.errors);
+                        } else if (report.warnings && report.warnings.length > 0) {
+                            setValidationStatus('warning');
+                            setValidationIssues(report.warnings);
+                        }
+                    }
+                } catch (e) {
+                    console.error("Validation check failed", e);
+                }
+            }
+        };
+        runValidation();
+    }, []);
 
     const totalXP = progress.xp;
     const level = calculateLevel(totalXP);
@@ -36,8 +69,8 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
     const AvatarIcon = AvatarConfig.icon;
 
     // Get reviews due
-    const { getReviewsDue } = useStudy();
-    const reviewsDue = getReviewsDue();
+    const { getReviewsDue } = useStudy(); // Note: getReviewsDue needs to be stable or this might re-render
+    const reviewsDue = getReviewsDue ? getReviewsDue() : [];
 
     const allAchievements = achievements.map(a => ({ ...a, unlocked: progress.achievements.includes(a.id) }));
 
@@ -53,8 +86,6 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
                 xp: progress.xp + xp,
                 dailyChallengeCompleted: today
             });
-            // Keep modal open briefly or let user close it? 
-            // The modal handles confetti. We can close it manually or let user do it.
         }
     };
 
@@ -64,6 +95,17 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
             {isDemoMode && (
                 <div className="bg-amber-500 text-white px-4 py-2 text-center text-sm">
                     <strong>Demo Mode:</strong> Configure your Data Source to enable live sync.
+                </div>
+            )}
+
+            {/* Validation Banner */}
+            {validationStatus !== 'ok' && (
+                <div className={cn(
+                    "px-4 py-2 text-center text-sm flex items-center justify-center gap-2 cursor-pointer",
+                    validationStatus === 'error' ? "bg-red-600 text-white" : "bg-amber-100 text-amber-800"
+                )} onClick={() => setShowLogs(true)}>
+                    <AlertTriangle className="w-4 h-4" />
+                    <strong>System Check:</strong> {validationIssues.length} issues found. Click to view logs.
                 </div>
             )}
 
@@ -100,6 +142,12 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
                         <button onClick={toggleDarkMode} className={cn("p-2 rounded-lg", darkMode ? "hover:bg-slate-700 text-slate-300" : "hover:bg-slate-100 text-slate-600")}>
                             {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </button>
+
+                        {/* New Content Manager Button */}
+                        <button onClick={() => setShowContentManager(true)} className={cn("p-2 rounded-lg", darkMode ? "hover:bg-slate-700 text-slate-300" : "hover:bg-slate-100 text-slate-600")} title="Content Manager">
+                            <Edit className="w-5 h-5" />
+                        </button>
+
                         <button onClick={() => setShowQAStats(true)} className={cn("p-2 rounded-lg", darkMode ? "hover:bg-slate-700 text-slate-300" : "hover:bg-slate-100 text-slate-600")} title="QA Statistics">
                             <BarChart2 className="w-5 h-5" />
                         </button>
@@ -121,6 +169,7 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
                 {/* Daily Challenge Banner */}
                 {todaysChallenge && (
                     <div className="mb-8">
+                        {/* ... Challenge Content ... */}
                         <div className={cn(
                             "rounded-2xl p-1",
                             darkMode ? "bg-gradient-to-r from-indigo-900 to-purple-900" : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
@@ -231,8 +280,8 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
                     </div>
                 </Card>
 
-                {/* Reviews Due Section */}
-                {reviewsDue.length > 0 && (
+                 {/* Reviews Due Section */}
+                 {reviewsDue && reviewsDue.length > 0 && (
                     <Card darkMode={darkMode} className="p-6 mb-8 mt-8">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className={cn("font-bold text-lg flex items-center gap-2", darkMode ? "text-white" : "text-slate-800")}>
@@ -287,11 +336,20 @@ const Dashboard = memo(({ onSelectSubject, onOpenSettings, onGoHome }) => {
             )}
 
             {showLogs && (
-                <LogsModal onClose={() => setShowLogs(false)} darkMode={darkMode} />
+                <LogsModal
+                    onClose={() => setShowLogs(false)}
+                    darkMode={darkMode}
+                    initialLogType={validationIssues.length > 0 ? "validation" : "system"}
+                    validationIssues={validationIssues} // Pass issues to logs modal
+                />
             )}
 
             {showAdminPanel && (
                 <AdminPanelModal onClose={() => setShowAdminPanel(false)} darkMode={darkMode} />
+            )}
+
+            {showContentManager && (
+                <ContentManager onClose={() => setShowContentManager(false)} darkMode={darkMode} />
             )}
         </div>
     );

@@ -8,6 +8,8 @@ import csvService from './csvService';
 import { fetchLocalExcelData } from './excelService';
 import { Logger } from './Logger';
 
+export { csvService };
+
 // Configuration: Set data source priority 
 // 'csv-first' = Try CSV first, fallback to Excel
 // 'excel-only' = Use only Excel
