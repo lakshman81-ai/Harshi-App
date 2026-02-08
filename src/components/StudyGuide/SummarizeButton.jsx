@@ -76,7 +76,7 @@ const SummarizeButton = ({ sectionTitle, sectionContent, darkMode }) => {
                     "hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all text-sm font-medium border",
                     darkMode
                         ? "bg-purple-500/10 text-purple-400 border-purple-500/50 hover:bg-purple-500/20"
-                        : "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                        : "bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200"
                 )}
                 title="Copy & Open AI Tool"
             >

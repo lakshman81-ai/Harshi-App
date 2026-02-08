@@ -196,15 +196,13 @@ const PostSectionReview = ({
 
                 {/* Footer */}
                 <div className={`sticky bottom-0 flex justify-end p-4 border-t ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
-                    {stage !== 'quiz' && (
-                        <button
-                            onClick={handleNext}
-                            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-white transition-colors ${darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'}`}
-                        >
-                            Continue
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
-                    )}
+                    <button
+                        onClick={handleNext}
+                        className={`flex items-center gap-2 px-6 py-2 rounded-lg text-white transition-colors ${darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'}`}
+                    >
+                        {stage === 'quiz' ? 'Skip Quiz' : 'Continue'}
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
                 </div>
             </div >
         </div >
