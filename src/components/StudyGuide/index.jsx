@@ -297,7 +297,7 @@ const StudyGuide = memo(({
       {showReview && currentSection && (
         <PostSectionReview
           subject={subject}
-          topic={topicKey}
+          topic={topic?.folder || topicKey}
           subtopicId={currentSection.id}
           keyTerms={topicTerms}
           misconceptions={sectionMisconceptions}

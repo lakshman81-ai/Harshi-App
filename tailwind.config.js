@@ -5,6 +5,14 @@ module.exports = {
     "./public/index.html"
   ],
   darkMode: 'class',
+  safelist: [
+    {
+      pattern: /from-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(400|500|600)/,
+    },
+    {
+      pattern: /to-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(500|600|700)/,
+    },
+  ],
   theme: {
     extend: {
       colors: {

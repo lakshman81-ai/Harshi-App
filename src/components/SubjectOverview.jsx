@@ -268,7 +268,13 @@ const SubjectOverview = memo(({ subject, onBack, onSelectTopic, onOpenSettings }
                                             "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
                                             topicProgress === 100 ? "bg-emerald-500" : topicProgress > 0 ? cn("bg-gradient-to-br", config.gradient) : darkMode ? "bg-slate-700" : "bg-slate-200"
                                         )}>
-                                            {topicProgress === 100 ? <CheckCircle2 className="w-6 h-6 text-white" /> : topicProgress > 0 ? <CircleDot className="w-6 h-6 text-white" /> : <Circle className={cn("w-6 h-6", darkMode ? "text-slate-500" : "text-slate-400")} />}
+                                            {topicProgress === 100 ? (
+                                                <CheckCircle2 className="w-6 h-6 text-white" />
+                                            ) : topicProgress > 0 ? (
+                                                <CircleDot className="w-6 h-6 text-white" />
+                                            ) : (
+                                                <Circle className={cn("w-6 h-6", darkMode ? "text-slate-500" : "text-slate-600")} />
+                                            )}
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <h3 className={cn("font-bold mb-1", darkMode ? "text-white" : "text-slate-800")}>{topic.name}</h3>

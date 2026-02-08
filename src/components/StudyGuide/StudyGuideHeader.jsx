@@ -61,7 +61,7 @@ const StudyGuideHeader = memo(({
             "p-2 rounded-lg transition-colors flex items-center gap-1",
             darkMode
               ? "hover:bg-slate-700 text-slate-400"
-              : "hover:bg-slate-100 text-slate-600"
+              : "bg-slate-100/50 hover:bg-slate-100 text-slate-600"
           )}
           title="Go back"
         >
@@ -76,7 +76,7 @@ const StudyGuideHeader = memo(({
             "lg:hidden p-2 rounded-lg transition-colors",
             darkMode
               ? "hover:bg-slate-700 text-slate-400"
-              : "hover:bg-slate-100 text-slate-600"
+              : "bg-slate-100/50 hover:bg-slate-100 text-slate-600"
           )}
         >
           <Menu className="w-5 h-5" />
@@ -163,7 +163,7 @@ const StudyGuideHeader = memo(({
             "xl:hidden p-2 rounded-lg transition-colors",
             darkMode
               ? "hover:bg-slate-700 text-slate-400"
-              : "hover:bg-slate-100 text-slate-500"
+              : "bg-slate-100/50 hover:bg-slate-100 text-slate-600"
           )}
           title="Key Terms"
         >
@@ -179,7 +179,7 @@ const StudyGuideHeader = memo(({
               ? "bg-amber-100 text-amber-600"
               : darkMode
                 ? "hover:bg-slate-700 text-slate-400"
-                : "hover:bg-slate-100 text-slate-500"
+                : "bg-slate-100/50 hover:bg-slate-100 text-slate-600"
           )}
           title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}
         >
@@ -195,7 +195,7 @@ const StudyGuideHeader = memo(({
               ? "bg-blue-100 text-blue-600"
               : darkMode
                 ? "hover:bg-slate-700 text-slate-400"
-                : "hover:bg-slate-100 text-slate-500"
+                : "bg-slate-100/50 hover:bg-slate-100 text-slate-600"
           )}
           title="Notes"
         >
@@ -209,7 +209,7 @@ const StudyGuideHeader = memo(({
             "hidden sm:block p-2 rounded-lg transition-colors",
             darkMode
               ? "hover:bg-slate-700 text-slate-400"
-              : "hover:bg-slate-100 text-slate-500"
+              : "bg-slate-100/50 hover:bg-slate-100 text-slate-600"
           )}
           title="Settings"
         >
