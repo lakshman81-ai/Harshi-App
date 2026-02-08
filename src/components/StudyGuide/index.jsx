@@ -2,6 +2,7 @@ import React, { memo, useState, useRef, useEffect, useCallback, useMemo } from '
 import PropTypes from 'prop-types';
 import { Star } from 'lucide-react';
 import { Logger } from '../../services/Logger';
+import { csvService } from '../../services/unifiedDataService'; // Explicit import
 
 // Import subcomponents
 import StudyGuideHeader from './StudyGuideHeader';
@@ -15,21 +16,14 @@ import NotesPanel from './NotesPanel';
 import PostSectionReview from './PostSectionReview';
 import HandoutInline from '../HandoutInline';
 import QuizSection from '../QuizSection';
+import QuestionnaireSelector from '../QuestionnaireSelector'; // Import Questionnaire Selector
 import { BookOpen, HelpCircle, ClipboardList } from 'lucide-react';
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 
 /**
  * StudyGuide Component
- * Complete study guide interface with sections, content, and navigation
- *
- * @param {Object} props
- * @param {string} props.subject - Subject key ("physics", "math", etc.)
- * @param {number} props.topicIndex - Index of topic in subject.topics array
- * @param {Function} props.onBack - Navigate back to subject overview
- * @param {Function} props.onOpenSettings - Open settings modal
- * @param {Object} props.studyData - Data from useStudy hook
- * @param {Object} props.ICON_MAP - Icon component map
+ * Updated to support new page-based structure and Questionnaire Selector
  */
 const StudyGuide = memo(({
   subject,
@@ -64,17 +58,55 @@ const StudyGuide = memo(({
   const config = subjects?.[subject];
   const topic = config?.topics?.[topicIndex];
   const topicKey = topic?.id;
+  const topicFolder = topic?.folder || topic?.topic_folder || topicKey; // Use folder if available
   const IconComponent = ICON_MAP?.[config?.icon];
 
-  // Get data for this topic (with fallbacks to defaults)
-  const topicSections = sections?.[topicKey] || DEFAULT_SECTIONS?.[topicKey] || [];
-  const topicObjectives = objectives?.[topicKey] || DEFAULT_OBJECTIVES?.[topicKey] || [];
-  const topicTerms = keyTerms?.[topicKey] || DEFAULT_KEY_TERMS?.[topicKey] || [];
-  const topicFormulas = formulas?.[topicKey] || DEFAULT_FORMULAS?.[topicKey] || [];
-  const topicQuizzes = quizQuestions?.[topicKey] || DEFAULT_QUIZZES?.[topicKey] || [];
+  // --- NEW: Load Page-Based Content ---
+  const [topicSections, setTopicSections] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentContent, setCurrentContent] = useState([]);
+
+  // Load sections (pages) from index.csv
+  useEffect(() => {
+    const loadData = async () => {
+        setLoading(true);
+        try {
+            // Try loading new page structure first
+            const pages = await csvService.loadStudyGuideIndex(subject, topicFolder);
+
+            if (pages && pages.length > 0) {
+                // Transform Pages to Section format
+                const newSections = pages.map(p => ({
+                    id: p.page_id,
+                    title: p.page_title,
+                    type: 'content',
+                    file: p.page_file,
+                    questions_file: p.questions_file,
+                    order_index: p.order_index
+                }));
+                setTopicSections(newSections);
+            } else {
+                // Fallback to old UnifiedDataService sections
+                const legacySections = sections?.[topicKey] || DEFAULT_SECTIONS?.[topicKey] || [];
+                setTopicSections(legacySections);
+            }
+        } catch (e) {
+            console.error("Error loading study guide index:", e);
+             // Fallback
+             setTopicSections(sections?.[topicKey] || []);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (subject && topicFolder) {
+        loadData();
+    }
+  }, [subject, topicFolder, topicKey, sections, DEFAULT_SECTIONS]);
+
 
   // State
-  const [activeTab, setActiveTab] = useState('study'); // 'study' | 'quiz' | 'handout'
+  const [activeTab, setActiveTab] = useState('study');
   const [activeSection, setActiveSection] = useState(0);
   const [showNotes, setShowNotes] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
@@ -82,6 +114,44 @@ const StudyGuide = memo(({
   const [showReview, setShowReview] = useState(false);
   const [xpGain, setXpGain] = useState(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
+
+  // Derived values
+  const currentSection = topicSections[activeSection];
+
+  // Load Content for Current Page (if it's a CSV file)
+  useEffect(() => {
+    const loadContent = async () => {
+        if (!currentSection) return;
+
+        // If it has a 'file' property ending in .csv, load it
+        if (currentSection.file && currentSection.file.toLowerCase().endsWith('.csv')) {
+            try {
+                const content = await csvService.loadPageContent(subject, topicFolder, currentSection.file);
+                setCurrentContent(content);
+            } catch (e) {
+                console.error("Failed to load page content", e);
+                setCurrentContent([]);
+            }
+        } else if (currentSection.file && (currentSection.file.toLowerCase().endsWith('.pdf') || currentSection.file.toLowerCase().endsWith('.doc'))) {
+             // PDF/Doc doesn't need 'content' array, handled in ContentArea via 'file' prop
+             setCurrentContent([]);
+        } else {
+            // Fallback to legacy studyContent map
+             const legacyContent = studyContent?.[currentSection.id] || DEFAULT_CONTENT?.[currentSection.id] || [];
+             setCurrentContent(legacyContent);
+        }
+    };
+
+    loadContent();
+  }, [currentSection, subject, topicFolder, studyContent, DEFAULT_CONTENT]);
+
+
+  // --- Legacy Data (keep for sidebars/extras) ---
+  const topicObjectives = objectives?.[topicKey] || DEFAULT_OBJECTIVES?.[topicKey] || [];
+  const topicTerms = keyTerms?.[topicKey] || DEFAULT_KEY_TERMS?.[topicKey] || [];
+  const topicFormulas = formulas?.[topicKey] || DEFAULT_FORMULAS?.[topicKey] || [];
+  const topicQuizzes = quizQuestions?.[topicKey] || DEFAULT_QUIZZES?.[topicKey] || [];
+
 
   // Define tabs
   const tabs = [
@@ -93,35 +163,19 @@ const StudyGuide = memo(({
   // Refs
   const contentRef = useRef(null);
 
-  // Derived values
-  const currentSection = topicSections[activeSection];
-
-  // Memoize section content to stabilize dependencies
-  const sectionContent = useMemo(() =>
-    currentSection
-      ? (studyContent?.[currentSection.id] || DEFAULT_CONTENT?.[currentSection.id] || [])
-      : [],
-    [currentSection, studyContent, DEFAULT_CONTENT]
-  );
-
   const progressPercent = progress?.topics?.[topicKey]?.progress || 0;
   const xpEarned = progress?.topics?.[topicKey]?.xp || 0;
-
-  // Memoize bookmarks to avoid recalculation on every render
   const bookmarks = useMemo(() => progress?.bookmarks || [], [progress?.bookmarks]);
-
   const userNotes = progress?.notes?.[topicKey] || '';
-
   const isBookmarked = useMemo(
     () => currentSection && bookmarks.includes(`${topicKey}-${currentSection.id}`),
     [currentSection, bookmarks, topicKey]
   );
 
-  // Extract misconceptions for the current section
   const sectionMisconceptions = useMemo(() => {
-    if (!sectionContent) return [];
-    return sectionContent.filter(item => item.type === 'misconception');
-  }, [sectionContent]);
+    if (!currentContent) return [];
+    return currentContent.filter(item => item.type === 'misconception');
+  }, [currentContent]);
 
   // Scroll to top when section changes
   useEffect(() => {
@@ -171,8 +225,6 @@ const StudyGuide = memo(({
       if (e.key === 'ArrowLeft' && activeSection > 0) {
         setActiveSection(prev => prev - 1);
       } else if (e.key === 'ArrowRight') {
-        // Logic for right arrow? Maybe same as Next button?
-        // For now keeping simple navigation for keyboard
         if (activeSection < topicSections.length - 1) {
           handleSectionComplete(activeSection);
           setActiveSection(prev => prev + 1);
@@ -185,7 +237,7 @@ const StudyGuide = memo(({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSection, topicSections.length, handleSectionComplete]); // simplified deps
+  }, [activeSection, topicSections.length, handleSectionComplete]);
 
   // Toggle bookmark
   const handleToggleBookmark = useCallback(() => {
@@ -246,10 +298,9 @@ const StudyGuide = memo(({
 
   const handleNext = useCallback(() => {
     try {
-      // Intelligent Navigation: Scroll first, then Next
       if (contentRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = contentRef.current;
-        const isActuallyAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 10; // 10px buffer
+        const isActuallyAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 10;
 
         if (!isAtBottom && !isActuallyAtBottom) {
           contentRef.current.scrollBy({ top: 400, behavior: 'smooth' });
@@ -258,20 +309,14 @@ const StudyGuide = memo(({
       }
 
       if (activeSection < topicSections.length - 1) {
-        if (typeof handleSectionComplete === 'function') {
-          handleSectionComplete(activeSection);
-        } else {
-          Logger.warn('handleSectionComplete is not a function');
-        }
-        // Trigger review before moving to next section
-        setShowReview(true);
+        handleSectionComplete(activeSection);
+        // setShowReview(true); // Disable review for now as logic might be tricky with pages
+        setActiveSection(prev => prev + 1);
       }
     } catch (error) {
       Logger.error('Error in handleNext navigation', error);
-      // Fallback: try to just move next if possible, or alert user
-      alert("Navigation error. Please try reloading the page.");
     }
-  }, [activeSection, topicSections.length, handleSectionComplete, isAtBottom]); // Added isAtBottom, removed recursion risks
+  }, [activeSection, topicSections.length, handleSectionComplete, isAtBottom]);
 
   const handleReviewComplete = useCallback(() => {
     setShowReview(false);
@@ -317,7 +362,6 @@ const StudyGuide = memo(({
       )}
 
       {/* Header */}
-      {console.log('Rendering StudyGuideHeader with props:', { topic, config, currentSection })}
       <StudyGuideHeader
         topic={topic}
         config={config}
@@ -333,7 +377,7 @@ const StudyGuide = memo(({
         onToggleNotes={() => setShowNotes(!showNotes)}
         onOpenSettings={onOpenSettings}
         IconComponent={IconComponent}
-        sectionContent={sectionContent}
+        sectionContent={currentContent}
         activeTab={activeTab}
       />
 
@@ -386,10 +430,10 @@ const StudyGuide = memo(({
               <div className="flex-1 flex flex-col overflow-hidden">
                 <ContentArea
                   currentSection={currentSection}
-                  sectionContent={sectionContent}
+                  sectionContent={currentContent}
                   objectives={topicObjectives}
                   formulas={topicFormulas}
-                  quizQuestions={topicQuizzes}
+                  quizQuestions={topicQuizzes} // Main quiz questions (fallback)
                   config={config}
                   darkMode={darkMode}
                   userXp={progress?.xp || 0}
@@ -398,6 +442,9 @@ const StudyGuide = memo(({
                   onUseHint={handleUseHint}
                   contentRef={contentRef}
                   onScrollStateChange={setIsAtBottom}
+                  // New Props
+                  subject={subject}
+                  topicFolder={topicFolder}
                 />
 
                 {/* Notes Panel */}
@@ -440,16 +487,12 @@ const StudyGuide = memo(({
           {activeTab === 'quiz' && (
             <div className="absolute inset-0 overflow-y-auto p-4 sm:p-6 lg:p-8">
               <div className="max-w-4xl mx-auto">
-                <QuizSection
-                  questions={topicQuizzes}
-                  darkMode={darkMode}
-                  subjectConfig={config}
-                  topicId={topicKey}
-                  onComplete={handleQuizComplete}
-                  onUseHint={handleUseHint}
-                  userXp={progress?.xp || 0}
-                  allowHints={true}
-                  hintCost={5}
+                <QuestionnaireSelector
+                    subject={config}
+                    subjectKey={subject}
+                    topic={topic}
+                    userXp={progress?.xp || 0}
+                    onComplete={handleQuizComplete}
                 />
               </div>
             </div>
@@ -465,7 +508,7 @@ const StudyGuide = memo(({
                 terms={topicTerms}
                 formulas={topicFormulas}
                 sections={topicSections}
-                studyContent={studyContent}
+                studyContent={currentContent}
                 quizQuestions={topicQuizzes}
                 darkMode={darkMode}
               />
@@ -507,32 +550,12 @@ StudyGuide.propTypes = {
   topicIndex: PropTypes.number.isRequired,
   onBack: PropTypes.func.isRequired,
   onOpenSettings: PropTypes.func,
-  studyData: PropTypes.shape({
-    progress: PropTypes.object,
-    subjects: PropTypes.object,
-    sections: PropTypes.object,
-    objectives: PropTypes.object,
-    keyTerms: PropTypes.object,
-    studyContent: PropTypes.object,
-    formulas: PropTypes.object,
-    quizQuestions: PropTypes.object,
-    updateProgress: PropTypes.func,
-    settings: PropTypes.shape({
-      darkMode: PropTypes.bool,
-    }),
-    DEFAULT_SECTIONS: PropTypes.object,
-    DEFAULT_OBJECTIVES: PropTypes.object,
-    DEFAULT_KEY_TERMS: PropTypes.object,
-    DEFAULT_CONTENT: PropTypes.object,
-    DEFAULT_FORMULAS: PropTypes.object,
-    DEFAULT_QUIZZES: PropTypes.object,
-  }).isRequired,
+  studyData: PropTypes.object.isRequired,
   ICON_MAP: PropTypes.object,
 };
 
 export default StudyGuide;
 
-// Re-export subcomponents for flexibility
 export {
   StudyGuideHeader,
   LeftSidebar,

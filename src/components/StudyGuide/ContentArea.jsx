@@ -1,8 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { FileText } from 'lucide-react';
+import { FileText, Download, ExternalLink, AlertCircle } from 'lucide-react';
 import {
-  ObjectivesBlock,
   TextBlock,
   FormulaBlock,
   ConceptHelperBlock,
@@ -14,31 +13,18 @@ import {
 } from './ContentBlocks';
 import QuizSection from '../QuizSection';
 import ContentErrorBoundary from '../ErrorBoundary';
+import { csvService } from '../../services/unifiedDataService'; // Import CSV service
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 
 /**
  * ContentArea Component
- * Main scrollable content area that renders content based on section type
- *
- * @param {Object} props
- * @param {Object} props.currentSection - Current section object { id, title, type, icon }
- * @param {Array} props.sectionContent - Content array for current section
- * @param {Array} props.objectives - Learning objectives for current topic
- * @param {Array} props.formulas - Formulas for current topic
- * @param {Array} props.quizQuestions - Quiz questions for current topic
- * @param {Object} props.config - Subject config { gradient, color }
- * @param {boolean} props.darkMode - Dark mode flag
- * @param {number} props.userXp - User's current XP
- * @param {string} props.topicId - Current topic ID
- * @param {Function} props.onQuizComplete - Quiz completion callback
- * @param {Function} props.onUseHint - Hint usage callback
- * @param {React.RefObject} props.contentRef - Ref for scroll-to-top
+ * Renders content based on file type (CSV, PDF, Word) and handles "Concept Checks"
  */
 const ContentArea = memo(({
   currentSection,
   sectionContent,
-  objectives,
+  objectives, // Kept for backward compat, though specific to "Objectives" type
   formulas,
   quizQuestions,
   config,
@@ -48,14 +34,138 @@ const ContentArea = memo(({
   onQuizComplete,
   onUseHint,
   contentRef,
-  onScrollStateChange
+  onScrollStateChange,
+  // New props for dynamic loading
+  subject,
+  topicFolder
 }) => {
-  // Reading progress state
   const [scrollProgress, setScrollProgress] = useState(0);
-  // Render content block based on type
+  const [conceptCheckQuestions, setConceptCheckQuestions] = useState([]);
+  const [showConceptCheck, setShowConceptCheck] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Load Concept Check questions if available for this page
+  useEffect(() => {
+    const loadQuestions = async () => {
+      if (currentSection?.questions_file) {
+        setLoading(true);
+        try {
+          // Use the exposed loadConceptCheck from csvService (via unifiedDataService export if re-exported, otherwise import directly)
+          // Since unifiedDataService might not export it directly, we import csvService above.
+           const questions = await import('../../services/csvService').then(m =>
+             m.loadConceptCheck(subject, topicFolder, currentSection.questions_file)
+           );
+
+           // Normalize questions to match QuizSection format
+           const normalized = questions.map((q, i) => ({
+             id: q.question_id || `cc-${i}`,
+             question: q.question_text,
+             options: [q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean),
+             correctAnswer: q.correct_answer, // Expecting 'A', 'B', 'C', 'D' or full text
+             explanation: q.explanation,
+             type: 'mcq', // Assume MCQ for concept checks
+             // Map A/B/C/D to full text if needed by QuizSection,
+             // but QuizSection usually handles index-based checking if options provided
+           }));
+
+           setConceptCheckQuestions(normalized);
+           setShowConceptCheck(true);
+        } catch (err) {
+          console.error("Failed to load concept check", err);
+          setError("Could not load concept check questions.");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setShowConceptCheck(false);
+        setConceptCheckQuestions([]);
+      }
+    };
+
+    loadQuestions();
+  }, [currentSection, subject, topicFolder]);
+
+
+  // Helper: Render different file types
+  const renderPageContent = () => {
+    const fileType = currentSection?.file?.split('.').pop()?.toLowerCase();
+
+    // PDF Handling
+    if (fileType === 'pdf') {
+      const publicUrl = process.env.PUBLIC_URL || '';
+      // Construct path relative to public
+      // currentSection.file is just "Page2.pdf". We need full path.
+      // Logic: /Subject/Topic/studyguide/Pages/Filename
+      const subjectName = subject.charAt(0).toUpperCase() + subject.slice(1);
+      const pdfPath = `${publicUrl}/${subjectName}/${topicFolder}/studyguide/Pages/${currentSection.file}`;
+
+      return (
+        <div className="h-[800px] w-full border rounded-xl overflow-hidden shadow-sm">
+            <iframe
+                src={pdfPath}
+                className="w-full h-full"
+                title={currentSection.title}
+            />
+        </div>
+      );
+    }
+
+    // Word Doc Handling (Download only)
+    if (fileType === 'doc' || fileType === 'docx') {
+      const subjectName = subject.charAt(0).toUpperCase() + subject.slice(1);
+      const docPath = `${process.env.PUBLIC_URL || ''}/${subjectName}/${topicFolder}/studyguide/Pages/${currentSection.file}`;
+
+      return (
+        <div className={cn(
+            "flex flex-col items-center justify-center p-12 border-2 dashed rounded-xl",
+            darkMode ? "border-slate-700 bg-slate-800/30" : "border-slate-300 bg-slate-50"
+        )}>
+            <FileText className="w-16 h-16 text-blue-500 mb-4" />
+            <h3 className={cn("text-xl font-bold mb-2", darkMode ? "text-white" : "text-slate-800")}>
+                Word Document Resource
+            </h3>
+            <p className={cn("mb-6 text-center max-w-md", darkMode ? "text-slate-400" : "text-slate-600")}>
+                This content is available as a downloadable document.
+                Please download it to view the full content.
+            </p>
+            <a
+                href={docPath}
+                download
+                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-medium transition-colors"
+            >
+                <Download className="w-5 h-5" />
+                Download {currentSection.file}
+            </a>
+        </div>
+      );
+    }
+
+    // CSV / Standard Content
+    if (!sectionContent || sectionContent.length === 0) {
+       // Fallback or Empty State
+       return (
+        <div className={cn("text-center py-12", darkMode ? "text-slate-400" : "text-slate-500")}>
+            <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p>No content available for this page.</p>
+        </div>
+       );
+    }
+
+    return (
+        <div className="space-y-6">
+            {sectionContent.map((content, index) => (
+            <ContentErrorBoundary key={content.id || index} darkMode={darkMode}>
+                {renderContentBlock(content, index)}
+            </ContentErrorBoundary>
+            ))}
+        </div>
+    );
+  };
+
+  // Render content block based on type (for CSV content)
   const renderContentBlock = (content, index) => {
     // Find matching formula for formula content type
-    // Priority: 1. By explicit formulaId, 2. By label match, 3. By formula text match, 4. Fallback to first
     const matchingFormula = content.type === 'formula'
       ? formulas?.find(f => content.formulaId && f.id === content.formulaId) ||
       formulas?.find(f => f.label === content.title) ||
@@ -93,10 +203,10 @@ const ContentArea = memo(({
         return <VideoBlock key={content.id || index} content={content} darkMode={darkMode} />;
 
       case 'image':
+      case 'visualization': // Map visualization to ImageBlock
         return <ImageBlock key={content.id || index} content={content} darkMode={darkMode} />;
 
       case 'key_term':
-        // Render flashcard-style key term
         return (
           <div
             key={content.id || index}
@@ -136,68 +246,38 @@ const ContentArea = memo(({
     }
   };
 
-  // Scroll progress tracking (debounced for performance)
+  // Scroll progress tracking
   useEffect(() => {
     const contentEl = contentRef?.current;
     if (!contentEl) return;
 
-    // Check initial state
-    const checkScroll = () => {
+    const handleScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = contentEl;
-      // Use a small buffer (e.g. 5px) to be safe across zoom levels/browsers
-      const isBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 5;
+      const maxScroll = scrollHeight - clientHeight;
+      const isBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 10;
+
       onScrollStateChange?.(isBottom);
 
-      // Helper to show if scroll is even possible
-      const canScroll = scrollHeight > clientHeight;
-      if (!canScroll) {
-        onScrollStateChange?.(true); // If no scrollbar, we are effectively at bottom
+      if (maxScroll <= 0) {
+        setScrollProgress(100);
+        return;
       }
-    };
 
-    // Check initially and after a slight delay for layout settle
-    checkScroll();
-    setTimeout(checkScroll, 100);
-    setTimeout(checkScroll, 500); // Failsafe
-
-    // Resize Observer for dynamic content changes
-    const resizeObserver = new ResizeObserver(() => {
-      checkScroll();
-    });
-    resizeObserver.observe(contentEl);
-
-    let timeoutId;
-    const handleScroll = () => {
-      // Debounce: only update after 50ms of no scrolling
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        const { scrollTop, scrollHeight, clientHeight } = contentEl;
-        const maxScroll = scrollHeight - clientHeight;
-
-        // Update bottom state with buffer
-        const isBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight - 5;
-        onScrollStateChange?.(isBottom);
-
-        // EDGE CASE: Avoid division by zero
-        if (maxScroll <= 0) {
-          setScrollProgress(100);
-          onScrollStateChange?.(true);
-          return;
-        }
-
-        const progress = Math.min(100, Math.round((scrollTop / maxScroll) * 100));
-        setScrollProgress(progress);
-      }, 50);
+      const progress = Math.min(100, Math.round((scrollTop / maxScroll) * 100));
+      setScrollProgress(progress);
     };
 
     contentEl.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', checkScroll);
+    // Initial check
+    handleScroll();
+
+    // Add resize listener
+    const resizeObserver = new ResizeObserver(handleScroll);
+    resizeObserver.observe(contentEl);
 
     return () => {
       contentEl.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', checkScroll);
       resizeObserver.disconnect();
-      clearTimeout(timeoutId);
     };
   }, [contentRef, onScrollStateChange, sectionContent, currentSection?.id]);
 
@@ -213,78 +293,66 @@ const ContentArea = memo(({
           style={{ width: `${scrollProgress}%` }}
           role="progressbar"
           aria-valuenow={scrollProgress}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`Reading progress: ${scrollProgress}%`}
         />
       </div>
 
-      <div className="max-w-3xl mx-auto p-4 sm:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 pb-32">
         {/* Section Title Card */}
         <div
           className={cn(
-            "rounded-2xl p-4 sm:p-6 border mb-6",
+            "rounded-2xl p-6 border mb-8",
             darkMode ? "bg-slate-800/50 border-slate-700" : "bg-white border-slate-200"
           )}
         >
-          <h2
-            className={cn(
-              "text-xl sm:text-2xl font-bold",
-              darkMode ? "text-white" : "text-slate-800"
-            )}
-          >
-            {currentSection?.title || 'Content'}
+          <h2 className={cn("text-2xl font-bold mb-2", darkMode ? "text-white" : "text-slate-800")}>
+            {currentSection?.section_title || currentSection?.title}
           </h2>
+          {currentSection?.file && (
+             <span className={cn(
+                 "text-xs px-2 py-1 rounded border uppercase tracking-wider",
+                 darkMode ? "bg-slate-800 border-slate-700 text-slate-400" : "bg-slate-100 border-slate-200 text-slate-500"
+             )}>
+                 {currentSection.file.split('.').pop()}
+             </span>
+          )}
         </div>
 
-        {/* Learning Objectives Section */}
-        {currentSection?.type === 'objectives' && objectives && (
-          <ObjectivesBlock objectives={objectives} darkMode={darkMode} />
-        )}
+        {/* Main Content Render */}
+        {renderPageContent()}
 
-        {/* Content Sections (intro, content, applications) */}
-        {(currentSection?.type === 'content' ||
-          currentSection?.type === 'intro' ||
-          currentSection?.type === 'applications') && (
-            <>
-              {sectionContent && sectionContent.length > 0 ? (
-                <div className="space-y-6">
-                  {sectionContent.map((content, index) => (
-                    <ContentErrorBoundary key={content.id || index} darkMode={darkMode}>
-                      {renderContentBlock(content, index)}
-                    </ContentErrorBoundary>
-                  ))}
+        {/* Concept Check Section */}
+        {showConceptCheck && conceptCheckQuestions.length > 0 && (
+            <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
+                        <AlertCircle className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                        <h3 className={cn("text-xl font-bold", darkMode ? "text-white" : "text-slate-900")}>
+                            Concept Check
+                        </h3>
+                        <p className={cn("text-sm", darkMode ? "text-slate-400" : "text-slate-600")}>
+                            Verify your understanding before moving to the next page.
+                        </p>
+                    </div>
                 </div>
-              ) : (
-                <div
-                  className={cn(
-                    "text-center py-12",
-                    darkMode ? "text-slate-400" : "text-slate-500"
-                  )}
-                >
-                  <FileText className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>Content for this section is being prepared.</p>
-                  <p className="text-sm mt-2">Update your Google Sheet to add content!</p>
-                </div>
-              )}
-            </>
-          )}
 
-        {/* Quiz Section - Hidden in print/handout mode via CSS */}
-        {currentSection?.type === 'quiz' && (
-          <div className="quiz-section">
-            <QuizSection
-              questions={quizQuestions || []}
-              darkMode={darkMode}
-              subjectConfig={config}
-              topicId={topicId}
-              onComplete={onQuizComplete}
-              onUseHint={onUseHint}
-              userXp={userXp}
-              allowHints={true}
-              hintCost={5}
-            />
-          </div>
+                <QuizSection
+                    questions={conceptCheckQuestions}
+                    darkMode={darkMode}
+                    subjectConfig={config}
+                    topicId={topicId}
+                    onComplete={(score, xp, results) => {
+                        console.log("Concept check complete", score);
+                        onQuizComplete?.(score, xp, results);
+                    }}
+                    onUseHint={onUseHint}
+                    userXp={userXp}
+                    allowHints={true}
+                    hintCost={0} // Free hints for concept checks?
+                    key={`cc-${currentSection.id}`} // Force reset on section change
+                />
+            </div>
         )}
       </div>
     </div>
@@ -294,41 +362,21 @@ const ContentArea = memo(({
 ContentArea.displayName = 'ContentArea';
 
 ContentArea.propTypes = {
-  currentSection: PropTypes.shape({
-    id: PropTypes.string,
-    title: PropTypes.string,
-    type: PropTypes.string,
-    icon: PropTypes.string,
-  }),
-  sectionContent: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string,
-    type: PropTypes.string,
-    title: PropTypes.string,
-    text: PropTypes.string,
-    formulaId: PropTypes.string,
-  })),
+  currentSection: PropTypes.object,
+  sectionContent: PropTypes.array,
   objectives: PropTypes.array,
-  formulas: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string,
-    label: PropTypes.string,
-    formula: PropTypes.string,
-  })),
+  formulas: PropTypes.array,
   quizQuestions: PropTypes.array,
-  config: PropTypes.shape({
-    gradient: PropTypes.string,
-    color: PropTypes.string,
-  }),
+  config: PropTypes.object,
   darkMode: PropTypes.bool,
   userXp: PropTypes.number,
   topicId: PropTypes.string,
   onQuizComplete: PropTypes.func,
   onUseHint: PropTypes.func,
   contentRef: PropTypes.object,
-};
-
-ContentArea.defaultProps = {
-  darkMode: false,
-  userXp: 0,
+  onScrollStateChange: PropTypes.func,
+  subject: PropTypes.string,
+  topicFolder: PropTypes.string
 };
 
 export default ContentArea;
