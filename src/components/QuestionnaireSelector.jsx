@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Target, HelpCircle, Trophy, Zap, AlertCircle, FileText } from 'lucide-react';
+import { Target, HelpCircle, AlertCircle, FileText } from 'lucide-react';
 import { csvService } from '../services/unifiedDataService'; // Explicit import
 import QuizSection from './QuizSection'; // Re-use the existing QuizSection
-import { cn } from '../utils';
 
 const QuestionnaireSelector = ({ subject, subjectKey, topic, onClose, onComplete, userXp }) => {
     const [quizzes, setQuizzes] = useState([]);
@@ -65,6 +64,18 @@ const QuestionnaireSelector = ({ subject, subjectKey, topic, onClose, onComplete
             <div className="flex items-center justify-center p-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
+        );
+    }
+
+    if (error) {
+        return (
+             <div className="p-8 text-center text-red-500 bg-white dark:bg-slate-800 rounded-lg shadow">
+                <AlertCircle className="w-12 h-12 mx-auto mb-4" />
+                <p>{error}</p>
+                <button onClick={() => { setError(null); setLoading(true); }} className="mt-4 text-blue-500 underline">
+                    Try Again
+                </button>
+             </div>
         );
     }
 

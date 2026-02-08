@@ -1,6 +1,6 @@
-import React, { memo, useState, useEffect, useRef } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { FileText, Download, ExternalLink, AlertCircle } from 'lucide-react';
+import { FileText, Download, AlertCircle, Loader } from 'lucide-react';
 import {
   TextBlock,
   FormulaBlock,
@@ -13,7 +13,6 @@ import {
 } from './ContentBlocks';
 import QuizSection from '../QuizSection';
 import ContentErrorBoundary from '../ErrorBoundary';
-import { csvService } from '../../services/unifiedDataService'; // Import CSV service
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 
@@ -50,9 +49,9 @@ const ContentArea = memo(({
     const loadQuestions = async () => {
       if (currentSection?.questions_file) {
         setLoading(true);
+        setError(null);
         try {
-          // Use the exposed loadConceptCheck from csvService (via unifiedDataService export if re-exported, otherwise import directly)
-          // Since unifiedDataService might not export it directly, we import csvService above.
+          // Dynamic import to avoid circular dependencies if any, or just to keep it isolated
            const questions = await import('../../services/csvService').then(m =>
              m.loadConceptCheck(subject, topicFolder, currentSection.questions_file)
            );
@@ -65,8 +64,6 @@ const ContentArea = memo(({
              correctAnswer: q.correct_answer, // Expecting 'A', 'B', 'C', 'D' or full text
              explanation: q.explanation,
              type: 'mcq', // Assume MCQ for concept checks
-             // Map A/B/C/D to full text if needed by QuizSection,
-             // but QuizSection usually handles index-based checking if options provided
            }));
 
            setConceptCheckQuestions(normalized);
@@ -95,7 +92,6 @@ const ContentArea = memo(({
     if (fileType === 'pdf') {
       const publicUrl = process.env.PUBLIC_URL || '';
       // Construct path relative to public
-      // currentSection.file is just "Page2.pdf". We need full path.
       // Logic: /Subject/Topic/studyguide/Pages/Filename
       const subjectName = subject.charAt(0).toUpperCase() + subject.slice(1);
       const pdfPath = `${publicUrl}/${subjectName}/${topicFolder}/studyguide/Pages/${currentSection.file}`;
@@ -321,7 +317,7 @@ const ContentArea = memo(({
         {renderPageContent()}
 
         {/* Concept Check Section */}
-        {showConceptCheck && conceptCheckQuestions.length > 0 && (
+        {showConceptCheck && (
             <div className="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
                 <div className="flex items-center gap-3 mb-6">
                     <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg">
@@ -337,21 +333,31 @@ const ContentArea = memo(({
                     </div>
                 </div>
 
-                <QuizSection
-                    questions={conceptCheckQuestions}
-                    darkMode={darkMode}
-                    subjectConfig={config}
-                    topicId={topicId}
-                    onComplete={(score, xp, results) => {
-                        console.log("Concept check complete", score);
-                        onQuizComplete?.(score, xp, results);
-                    }}
-                    onUseHint={onUseHint}
-                    userXp={userXp}
-                    allowHints={true}
-                    hintCost={0} // Free hints for concept checks?
-                    key={`cc-${currentSection.id}`} // Force reset on section change
-                />
+                {loading ? (
+                    <div className="flex justify-center p-8">
+                        <Loader className="w-8 h-8 animate-spin text-blue-500" />
+                    </div>
+                ) : error ? (
+                    <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 rounded-lg text-center">
+                        {error}
+                    </div>
+                ) : (
+                    <QuizSection
+                        questions={conceptCheckQuestions}
+                        darkMode={darkMode}
+                        subjectConfig={config}
+                        topicId={topicId}
+                        onComplete={(score, xp, results) => {
+                            console.log("Concept check complete", score);
+                            onQuizComplete?.(score, xp, results);
+                        }}
+                        onUseHint={onUseHint}
+                        userXp={userXp}
+                        allowHints={true}
+                        hintCost={0} // Free hints for concept checks?
+                        key={`cc-${currentSection.id}`} // Force reset on section change
+                    />
+                )}
             </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 import React, { memo, useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { Star } from 'lucide-react';
+import { Star, Loader } from 'lucide-react';
 import { Logger } from '../../services/Logger';
 import { csvService } from '../../services/unifiedDataService'; // Explicit import
 
@@ -15,7 +15,6 @@ import KeyTermsDrawer from './KeyTermsDrawer';
 import NotesPanel from './NotesPanel';
 import PostSectionReview from './PostSectionReview';
 import HandoutInline from '../HandoutInline';
-import QuizSection from '../QuizSection';
 import QuestionnaireSelector from '../QuestionnaireSelector'; // Import Questionnaire Selector
 import { BookOpen, HelpCircle, ClipboardList } from 'lucide-react';
 
@@ -334,6 +333,14 @@ const StudyGuide = memo(({
         <p className={darkMode ? "text-slate-400" : "text-slate-500"}>Topic not found</p>
       </div>
     );
+  }
+
+  if (loading) {
+      return (
+          <div className={cn("min-h-screen flex items-center justify-center", darkMode ? "bg-slate-900" : "bg-slate-50")}>
+              <Loader className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
+      );
   }
 
   return (

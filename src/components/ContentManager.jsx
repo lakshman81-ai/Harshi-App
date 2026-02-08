@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
     Folder, File, ChevronRight, ChevronDown,
-    Save, Upload, Plus, Trash2, Edit, AlertCircle,
+    Save, Upload, Edit, AlertCircle,
     CheckCircle, X, Loader, FileText
 } from 'lucide-react';
 import { csvService } from '../services/unifiedDataService'; // Explicit import
@@ -9,7 +9,12 @@ import { cn } from '../utils';
 
 // Constants
 const API_URL = 'http://localhost:3001/api';
-const ALLOWED_EXTENSIONS = ['.csv', '.pdf', '.doc', '.docx', '.jpg', '.png'];
+
+const fetchFileList = async (path) => {
+    const res = await fetch(`${API_URL}/files?path=${encodeURIComponent(path)}`);
+    if (!res.ok) throw new Error('Failed to fetch files');
+    return await res.json();
+};
 
 const ContentManager = ({ onClose, darkMode }) => {
     const [fileTree, setFileTree] = useState([]);
@@ -21,12 +26,7 @@ const ContentManager = ({ onClose, darkMode }) => {
     const [statusMessage, setStatusMessage] = useState(null);
     const [loadingTree, setLoadingTree] = useState(true);
 
-    // Initial Load
-    useEffect(() => {
-        refreshTree();
-    }, []);
-
-    const refreshTree = async () => {
+    const refreshTree = useCallback(async () => {
         setLoadingTree(true);
         try {
             // Fetch root structure
@@ -51,13 +51,12 @@ const ContentManager = ({ onClose, darkMode }) => {
         } finally {
             setLoadingTree(false);
         }
-    };
+    }, []);
 
-    const fetchFileList = async (path) => {
-        const res = await fetch(`${API_URL}/files?path=${encodeURIComponent(path)}`);
-        if (!res.ok) throw new Error('Failed to fetch files');
-        return await res.json();
-    };
+    // Initial Load
+    useEffect(() => {
+        refreshTree();
+    }, [refreshTree]);
 
     const toggleFolder = async (folderPath) => {
         // Toggle expansion
