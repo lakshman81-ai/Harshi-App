@@ -1,0 +1,6 @@
+question_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation
+cc-1,What is Inertia?,A force,Resistance to change in motion,Weight,Acceleration,B,Inertia is the property of an object to resist changes in its state of motion.
+cc-2,What is the unit of Force?,Kilogram,Joule,Newton,Watt,C,Force is measured in Newtons (N).
+cc-3,Newton's First Law is also known as?,Law of Gravity,Law of Inertia,Law of Action-Reaction,Law of Acceleration,B,First Law describes inertia.
+cc-4,Mass is a measure of?,Volume,Weight,Inertia,Density,C,More mass means more inertia.
+cc-5,A net force of zero means?,The object is stopped,The object is accelerating,Velocity is constant,Friction is high,C,Zero net force means zero acceleration (constant velocity).
