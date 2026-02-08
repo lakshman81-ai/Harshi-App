@@ -1,0 +1,4 @@
+question_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,hint,difficulty,xp_reward
+q1,What is the coefficient of x in 3x + 5?,3,5,x,8,A,The number multiplying the variable.,Look at the number before x.,easy,10
+q2,Expand (x+2)^2.,x^2 + 4,x^2 + 2x + 4,x^2 + 4x + 4,x^2 + 4x + 2,C,Use (a+b)^2 = a^2 + 2ab + b^2.,Remember the middle term.,medium,15
+q3,Identify the binomial.,3x^2,x+y,5,x^2+y+z,B,A binomial has exactly two terms.,Count the terms separated by + or -.,easy,10
