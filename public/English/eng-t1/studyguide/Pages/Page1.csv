@@ -1,0 +1,16 @@
+section_id,content_type,content_title,content_text,explanation,common_misconception,correction,image_url,video_url,order_index
+intro-eng-t1-1,introduction,What are Tenses?,"Tense is the form of a verb that takes to show the time it happened. There are three main tenses: Past, Present, and Future.",,,,,,1
+table-eng-t1-1,table,Tense Chart,"Tense|Simple|Continuous|Perfect
+Present|I eat.|I am eating.|I have eaten.
+Past|I ate.|I was eating.|I had eaten.
+Future|I will eat.|I will be eating.|I will have eaten.",,,,,,2
+flow-eng-t1-1,mermaid,Verb Conjugation,"graph LR
+    A[Base Form: Eat] --> B{Time?}
+    B -- Past --> C[Ate]
+    B -- Present --> D[Eat/Eats]
+    B -- Future --> E[Will Eat]
+    C --> F[Completed Action]
+    D --> G[Habitual Action]
+    E --> H[Prediction]",,,,,,3
+example-eng-t1-1,example,Present Perfect Tense,"I have finished my homework. (Action completed in the immediate past)",,,,,,4
+misc-eng-t1-1,misconception,Continuous vs Simple,"'I am knowing him' is incorrect. Stative verbs like 'know' are not used in continuous forms.",Use 'I know him' instead.,Stative verbs describe states, not actions.,,,5

@@ -1,0 +1,4 @@
+question_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,hint,difficulty,xp_reward
+q1,Which one of the following is a renewable resource?,Coal,Petroleum,Solar Energy,Natural Gas,C,Solar energy is replenished naturally.,Source is the sun.,easy,10
+q2,Resources that are surveyed and their quality and quantity have been determined for utilization are known as...?,Potential Resources,Stock,Developed Resources,Reserves,C,They are ready for use.,Development status.,medium,15
+q3,Which one of the following is an abiotic resource?,Flora,Fauna,Rocks,Human Beings,C,Abiotic means non-living.,Look for non-living things.,easy,10

@@ -1,0 +1,2 @@
+question_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,hint,difficulty,xp_reward
+cc1,What determines if a resource is developed?,Technology,Survey,Quantity,All of the above,D,Comprehensive assessment.,Multiple factors.,easy,5
