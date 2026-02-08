@@ -114,7 +114,30 @@ export async function loadStudyGuideIndex(subject, topicFolder) {
 export async function loadPageContent(subject, topicFolder, filename) {
     const subjectName = subject.charAt(0).toUpperCase() + subject.slice(1);
     const path = `/${subjectName}/${topicFolder}/studyguide/Pages/${filename}`;
-    return fetchCSV(path);
+    const data = await fetchCSV(path);
+
+    // Map CSV columns (snake_case) to Component props (camelCase)
+    return data.map(row => ({
+        ...row,
+        // Standard Text/Block fields
+        type: row.content_type || row.type,
+        title: row.content_title || row.title,
+        text: row.content_text || row.text,
+
+        // Misconception specific fields
+        wrongExample: row.common_misconception || row.wrongExample,
+        correctExample: row.correction || row.correctExample,
+
+        // Image/Video specific fields
+        imageUrl: row.image_url || row.imageUrl,
+        videoUrl: row.video_url || row.videoUrl,
+
+        // Formula specific fields
+        formula: row.formula || row.content_text, // Fallback if formula is in text column
+
+        // Ensure ID
+        id: row.section_id || row.id || `block-${Math.random().toString(36).substr(2, 9)}`
+    }));
 }
 
 /**

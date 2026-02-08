@@ -31,6 +31,7 @@ const ContentArea = memo(({
   userXp,
   topicId,
   onQuizComplete,
+  onConceptCheckComplete,
   onUseHint,
   contentRef,
   onScrollStateChange,
@@ -350,6 +351,7 @@ const ContentArea = memo(({
                         onComplete={(score, xp, results) => {
                             console.log("Concept check complete", score);
                             onQuizComplete?.(score, xp, results);
+                            onConceptCheckComplete?.(score >= 80); // Mark as complete if score is good enough (or just completed)
                         }}
                         onUseHint={onUseHint}
                         userXp={userXp}
@@ -378,6 +380,7 @@ ContentArea.propTypes = {
   userXp: PropTypes.number,
   topicId: PropTypes.string,
   onQuizComplete: PropTypes.func,
+  onConceptCheckComplete: PropTypes.func,
   onUseHint: PropTypes.func,
   contentRef: PropTypes.object,
   onScrollStateChange: PropTypes.func,

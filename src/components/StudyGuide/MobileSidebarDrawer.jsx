@@ -29,7 +29,8 @@ const MobileSidebarDrawer = memo(({
   darkMode,
   onClose,
   onSelectSection,
-  ICON_MAP
+  ICON_MAP,
+  completedSections = new Set()
 }) => {
   // Close on escape key
   useEffect(() => {
@@ -160,7 +161,7 @@ const MobileSidebarDrawer = memo(({
             {sections.filter(section => section.type !== 'quiz').map((section, i) => {
               // Find actual index in original sections array for progress calculation
               const originalIndex = sections.findIndex(s => s.id === section.id);
-              const isCompleted = originalIndex < Math.floor((progressPercent / 100) * sections.length);
+              const isCompleted = completedSections.has(section.id);
               const isActive = activeSection === originalIndex;
 
               return (
