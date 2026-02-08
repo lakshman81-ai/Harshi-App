@@ -231,14 +231,18 @@ function parseCSVToClassDiagram(content) {
 
         code += `  class ${className} {\n`;
         if (attrs) {
-            attrs.split(',').forEach(a => {
+            // Using standard for loop to avoid no-loop-func ESLint error
+            const attrList = attrs.split(',');
+            for (const a of attrList) {
                 code += `    ${a.trim()}\n`;
-            });
+            }
         }
         if (methods) {
-            methods.split(',').forEach(m => {
+            // Using standard for loop to avoid no-loop-func ESLint error
+            const methodList = methods.split(',');
+            for (const m of methodList) {
                 code += `    ${m.trim()}\n`;
-            });
+            }
         }
         code += '  }\n';
 

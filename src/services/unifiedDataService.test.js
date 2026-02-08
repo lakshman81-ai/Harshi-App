@@ -20,7 +20,8 @@ describe('unifiedDataService - Data Validation Gates', () => {
 
     test('Gate Check: Should pass with valid data structure', () => {
         expect(() => validateData(validData)).not.toThrow();
-        expect(Logger.gate).toHaveBeenCalledWith('Data Validation', true);
+        // Updated expectation to include context "UnifiedDataService"
+        expect(Logger.gate).toHaveBeenCalledWith('Data Validation', true, 'UnifiedDataService');
     });
 
     test('Gate Check: Should fail when SUBJECTS are missing', () => {
@@ -28,13 +29,15 @@ describe('unifiedDataService - Data Validation Gates', () => {
         delete invalidData.SUBJECTS;
 
         expect(() => validateData(invalidData)).toThrow(/Missing keys SUBJECTS/);
-        expect(Logger.gate).toHaveBeenCalledWith('Data Validation', false);
+        // Updated expectation to include context "UnifiedDataService"
+        expect(Logger.gate).toHaveBeenCalledWith('Data Validation', false, 'UnifiedDataService');
     });
 
     test('Gate Check: Should fail when SUBJECTS are empty', () => {
         const invalidData = { ...validData, SUBJECTS: [] };
 
         expect(() => validateData(invalidData)).toThrow(/No subjects loaded/);
-        expect(Logger.gate).toHaveBeenCalledWith('Data Validation', false);
+        // Updated expectation to include context "UnifiedDataService"
+        expect(Logger.gate).toHaveBeenCalledWith('Data Validation', false, 'UnifiedDataService');
     });
 });

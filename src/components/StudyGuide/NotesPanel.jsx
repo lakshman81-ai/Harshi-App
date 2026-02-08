@@ -27,7 +27,6 @@ const NotesPanel = memo(({
   const [notes, setNotes] = useState(initialNotes || '');
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState(null);
-  const [saveStatus, setSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved' | 'error'
   const saveTimeoutRef = useRef(null);
   const textareaRef = useRef(null);
 
@@ -45,11 +44,9 @@ const NotesPanel = memo(({
 
     saveTimeoutRef.current = setTimeout(() => {
       setIsSaving(true);
-      setSaveStatus('saving');
       onSave?.(topicId, content);
       setTimeout(() => {
         setIsSaving(false);
-        setSaveStatus('saved');
         setLastSaved(new Date());
         saveTimeoutRef.current = null;
       }, 500);
@@ -70,11 +67,9 @@ const NotesPanel = memo(({
       saveTimeoutRef.current = null; // Clear ref to prevent race condition
     }
     setIsSaving(true);
-    setSaveStatus('saving');
     onSave?.(topicId, notes);
     setTimeout(() => {
       setIsSaving(false);
-      setSaveStatus('saved');
       setLastSaved(new Date());
     }, 500);
   };

@@ -12,46 +12,51 @@ import { X, ChevronRight } from 'lucide-react';
 import MisconceptionBlock from './ContentBlocks/MisconceptionBlock';
 import FlashcardDeck from './FlashcardDeck';
 import QuestionRenderer from '../questions/QuestionRenderer';
-import { loadMisconceptions, loadSubtopicQuiz, filterBySubtopic } from '../../services/studyGuideDataService';
+import { loadSubtopicQuiz, filterBySubtopic } from '../../services/studyGuideDataService';
 import { Logger } from '../../services/Logger';
+
+const CONTEXT = 'PostSectionReview';
 
 const PostSectionReview = ({
     subject,
     topic,
     subtopicId,
     keyTerms = [],
+    misconceptions = [],
     darkMode = false,
     onClose,
     onComplete,
 }) => {
     const [stage, setStage] = useState('loading'); // loading, misconceptions, flashcards, quiz, complete
-    const [misconceptions, setMisconceptions] = useState([]);
+    const [reviewMisconceptions, setReviewMisconceptions] = useState([]);
     const [quizQuestions, setQuizQuestions] = useState([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [quizResults, setQuizResults] = useState([]);
-
-
-
-    // ... imports ...
 
     // Load data on mount
     useEffect(() => {
         const loadData = async () => {
             try {
-                Logger.info('[PostSectionReview] Loading data', { subject, topic, subtopicId });
+                Logger.info('Initializing review', { subject, topic, subtopicId }, CONTEXT);
 
-                const [miscData, quizData] = await Promise.all([
-                    loadMisconceptions(subject, topic),
-                    loadSubtopicQuiz(subject, topic),
-                ]);
+                // Use provided misconceptions or empty
+                const filteredMisc = filterBySubtopic(misconceptions, subtopicId) || [];
 
-                // Filter by subtopic
-                const filteredMisc = filterBySubtopic(miscData, subtopicId) || [];
+                // Try to load quiz (legacy support, might be 404 but handled gracefully)
+                // Note: topic might be ID (phys-t1) or folder. If ID != Folder, this might 404.
+                // We accept that for now as we move towards unified content.
+                const quizData = await loadSubtopicQuiz(subject, topic);
                 const filteredQuiz = filterBySubtopic(quizData, subtopicId) || [];
                 const filteredTerms = filterBySubtopic(keyTerms, subtopicId) || [];
 
-                setMisconceptions(filteredMisc);
+                setReviewMisconceptions(filteredMisc);
                 setQuizQuestions(filteredQuiz);
+
+                Logger.data('Review Content', {
+                    misconceptions: filteredMisc.length,
+                    terms: filteredTerms.length,
+                    quiz: filteredQuiz.length
+                }, CONTEXT);
 
                 // Determine first stage
                 if (filteredMisc.length > 0) {
@@ -61,28 +66,45 @@ const PostSectionReview = ({
                 } else if (filteredQuiz.length > 0) {
                     setStage('quiz');
                 } else {
-                    Logger.info('[PostSectionReview] No content for review, skipping');
+                    Logger.info('No content for review, skipping', null, CONTEXT);
                     setStage('complete');
                 }
             } catch (error) {
-                Logger.error('[PostSectionReview] Failed to load data', error);
+                Logger.error('Failed to load review data', error, CONTEXT);
                 setStage('complete'); // Skip review on error
             }
         };
 
         loadData();
-    }, [subject, topic, subtopicId, keyTerms]);
+    }, [subject, topic, subtopicId, keyTerms, misconceptions]);
+
+    // Handle stage transitions
+    useEffect(() => {
+        if (stage === 'complete') {
+            onComplete?.();
+            onClose(); // Ensure modal closes
+        }
+    }, [stage, onComplete, onClose]);
 
     const handleNext = () => {
+        Logger.action('Next Stage', { currentStage: stage }, CONTEXT);
+
         if (stage === 'misconceptions') {
-            setStage(keyTerms.length > 0 ? 'flashcards' : (quizQuestions.length > 0 ? 'quiz' : 'complete'));
+            if (keyTerms.length > 0) {
+                setStage('flashcards');
+            } else if (quizQuestions.length > 0) {
+                setStage('quiz');
+            } else {
+                setStage('complete');
+            }
         } else if (stage === 'flashcards') {
-            setStage(quizQuestions.length > 0 ? 'quiz' : 'complete');
+            if (quizQuestions.length > 0) {
+                setStage('quiz');
+            } else {
+                setStage('complete');
+            }
         } else if (stage === 'quiz') {
             setStage('complete');
-        } else {
-            onComplete?.();
-            onClose();
         }
     };
 
@@ -99,8 +121,7 @@ const PostSectionReview = ({
 
     if (stage === 'loading') {
         return (
-            <div className={`fixed inset-0 z-50 flex items-center justify-center ${darkMode ? 'bg-slate-900/80' : 'bg-slate-900/50'
-                }`}>
+            <div className={`fixed inset-0 z-50 flex items-center justify-center ${darkMode ? 'bg-slate-900/80' : 'bg-slate-900/50'}`}>
                 <div className={`rounded-2xl p-8 ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
                     <p className={darkMode ? 'text-white' : 'text-slate-800'}>Loading review...</p>
                 </div>
@@ -109,17 +130,14 @@ const PostSectionReview = ({
     }
 
     if (stage === 'complete') {
-        return null; // Close automatically
+        return null;
     }
 
     return (
-        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${darkMode ? 'bg-slate-900/90' : 'bg-slate-900/50'
-            }`}>
-            <div className={`w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl ${darkMode ? 'bg-slate-800' : 'bg-white'
-                }`}>
+        <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${darkMode ? 'bg-slate-900/90' : 'bg-slate-900/50'}`}>
+            <div className={`w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl ${darkMode ? 'bg-slate-800' : 'bg-white'}`}>
                 {/* Header */}
-                <div className={`sticky top-0 z-10 flex items-center justify-between p-4 border-b ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
-                    }`}>
+                <div className={`sticky top-0 z-10 flex items-center justify-between p-4 border-b ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                     <h2 className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-slate-800'}`}>
                         {stage === 'misconceptions' && '⚠️ Common Mistakes'}
                         {stage === 'flashcards' && '🎴 Review Key Terms'}
@@ -127,19 +145,18 @@ const PostSectionReview = ({
                     </h2>
                     <button
                         onClick={onClose}
-                        className={`p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-slate-700' : 'hover:bg-slate-100'
-                            }`}
+                        className={`p-2 rounded-lg transition-colors ${darkMode ? 'hover:bg-slate-700' : 'hover:bg-slate-100'}`}
                         aria-label="Close review"
                     >
-                        <X className="w-5 h-5" />
+                        <X className={`w-5 h-5 ${darkMode ? 'text-white' : 'text-slate-500'}`} />
                     </button>
                 </div>
 
                 {/* Content */}
                 <div className="p-6 space-y-6">
-                    {stage === 'misconceptions' && Array.isArray(misconceptions) && (
+                    {stage === 'misconceptions' && Array.isArray(reviewMisconceptions) && (
                         <>
-                            {misconceptions.map((misc, idx) => (
+                            {reviewMisconceptions.map((misc, idx) => (
                                 <MisconceptionBlock
                                     key={misc.id || idx}
                                     title={misc.title}
@@ -178,12 +195,11 @@ const PostSectionReview = ({
                 </div>
 
                 {/* Footer */}
-                <div className={`sticky bottom-0 flex justify-end p-4 border-t ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'
-                    }`}>
+                <div className={`sticky bottom-0 flex justify-end p-4 border-t ${darkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-slate-200'}`}>
                     {stage !== 'quiz' && (
                         <button
                             onClick={handleNext}
-                            className="flex items-center gap-2 px-6 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+                            className={`flex items-center gap-2 px-6 py-2 rounded-lg text-white transition-colors ${darkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'}`}
                         >
                             Continue
                             <ChevronRight className="w-4 h-4" />
@@ -200,6 +216,7 @@ PostSectionReview.propTypes = {
     topic: PropTypes.string.isRequired,
     subtopicId: PropTypes.string.isRequired,
     keyTerms: PropTypes.array,
+    misconceptions: PropTypes.array,
     darkMode: PropTypes.bool,
     onClose: PropTypes.func.isRequired,
     onComplete: PropTypes.func,

@@ -274,7 +274,8 @@ const QuizSection = memo(({
   };
 
   // HELPER: Check if answer is correct based on question type
-  const isAnswerCorrect = (question, selectedAnswer) => {
+  // Used by handleSubmit
+  const isAnswerCorrect = useCallback((question, selectedAnswer) => {
     if (!selectedAnswer) return false;
 
     const questionType = (question.type || 'mcq').toLowerCase();
@@ -299,7 +300,7 @@ const QuizSection = memo(({
       // Fallback: Simple string comparison
       return selectedAnswer === question.correctAnswer;
     }
-  };
+  }, []);
 
   // Submit quiz
   const handleSubmit = useCallback(() => {
@@ -357,7 +358,7 @@ const QuizSection = memo(({
         origin: { y: 0.6 }
       });
     }
-  }, [filteredQuestions, answers, hintsUsed, onComplete, durations]);
+  }, [filteredQuestions, answers, hintsUsed, onComplete, durations, isAnswerCorrect]);
 
   // Keep handleSubmitRef updated to avoid stale closure in timer
   useEffect(() => {

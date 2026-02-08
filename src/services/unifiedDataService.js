@@ -6,42 +6,37 @@
 
 import csvService from './csvService';
 import { fetchLocalExcelData } from './excelService';
-import { log } from '../utils';
 import { Logger } from './Logger';
 
 // Configuration: Set data source priority 
 // 'csv-first' = Try CSV first, fallback to Excel
 // 'excel-only' = Use only Excel
 const DATA_SOURCE_MODE = 'csv-first';
+const CONTEXT = 'UnifiedDataService';
 
 /**
  * Load all application data with fallback support
  * @returns {Promise<Object>} Complete application data
  */
 export async function loadAppData() {
-    log('Loading application data...');
-    Logger.info('Starting data load process', { mode: DATA_SOURCE_MODE });
+    Logger.info('Starting data load process', { mode: DATA_SOURCE_MODE }, CONTEXT);
 
     if (DATA_SOURCE_MODE === 'csv-first') {
         try {
             const data = await loadFromCSV();
             validateData(data);
-            Logger.gate('Data Load', true);
+            Logger.gate('Data Load', true, CONTEXT);
             return data;
         } catch (csvError) {
-            console.error('❌ [loadAppData] CSV loading FAILED:', csvError);
-            console.error('❌ [loadAppData] Error message:', csvError.message);
-            console.error('❌ [loadAppData] Error stack:', csvError.stack);
-            Logger.warn('CSV loading failed, falling back to Excel', csvError);
-            log('CSV loading failed, falling back to Excel:', csvError);
+            Logger.error('CSV loading failed, falling back to Excel', csvError, CONTEXT);
             try {
                 const excelData = await loadFromExcel();
                 validateData(excelData);
-                Logger.gate('Fallback Data Load', true);
+                Logger.gate('Fallback Data Load', true, CONTEXT);
                 return excelData;
             } catch (excelError) {
-                Logger.gate('Data Load', false);
-                Logger.error('All data loading methods failed', excelError);
+                Logger.gate('Data Load', false, CONTEXT);
+                Logger.error('All data loading methods failed', excelError, CONTEXT);
                 throw excelError;
             }
         }
@@ -64,7 +59,7 @@ function normalizeQuizQuestion(row, index) {
 
     // ERROR LOGGING: Warn if type was missing
     if (!rawType) {
-        console.log(`[unifiedDataService] Question ${row.id || index}: No type specified, defaulting to 'mcq'`);
+        Logger.warn(`Question ${row.id || index}: No type specified, defaulting to 'mcq'`, null, CONTEXT);
     }
 
     return {
@@ -109,7 +104,7 @@ function parseOptions(optionsStr) {
  */
 async function loadFromCSV() {
     try {
-        log('Loading from CSV structure...');
+        Logger.info('Loading from CSV structure...', null, CONTEXT);
 
         const masterIndex = await csvService.loadMasterIndex('questionnaire');
         if (!masterIndex || masterIndex.length === 0) {
@@ -121,7 +116,7 @@ async function loadFromCSV() {
         masterIndex.forEach(item => {
             // Skip items without a subject_key
             if (!item.subject_key) {
-                console.warn('Skipping item without subject_key:', item);
+                Logger.warn('Skipping item without subject_key', item, CONTEXT);
                 return;
             }
 
@@ -161,22 +156,20 @@ async function loadFromCSV() {
                 const normalizedQuestions = rawQuestions.map((q, idx) => normalizeQuizQuestion(q, idx));
                 quizQuestions.push(...normalizedQuestions);
             } catch (error) {
-                log(`No quiz questions for ${topic.topic_id}`, error);
+                Logger.warn(`No quiz questions for ${topic.topic_id}`, error, CONTEXT);
             }
 
             // Load sections
             try {
-                console.log(`🟢 [unifiedDataService] Loading sections for topic: ${topic.topic_id}, folder: ${topic.topic_folder}, subject: ${subject}`);
+                Logger.data(`Loading sections for topic: ${topic.topic_id}`, { folder: topic.topic_folder, subject }, CONTEXT);
                 const sections = await csvService.loadSections(subject, topic.topic_folder);
-                console.log(`🟢 [unifiedDataService] Raw sections loaded for ${topic.topic_id}:`, sections);
                 const sectionsWithTopicId = sections.map(item => ({
                     ...item,
                     topic_id: item.topic_id || topic.topic_id
                 }));
-                console.log(`🟢 [unifiedDataService] Sections after adding topic_id for ${topic.topic_id}:`, sectionsWithTopicId);
                 topicSections.push(...sectionsWithTopicId);
             } catch (error) {
-                console.warn(`⚠️ [unifiedDataService] No sections for ${topic.topic_id}`, error);
+                Logger.warn(`No sections for ${topic.topic_id}`, error, CONTEXT);
             }
 
             // Load study content
@@ -189,23 +182,15 @@ async function loadFromCSV() {
                 }));
                 studyContent.push(...contentWithTopicId);
             } catch (error) {
-                log(`No study content for ${topic.topic_id}`, error);
+                Logger.warn(`No study content for ${topic.topic_id}`, error, CONTEXT);
             }
         }
 
-        log(`Loaded ${quizQuestions.length} quiz questions from CSV`);
-        log(`Loaded ${studyContent.length} study content items from CSV`);
-        log(`Loaded ${topicSections.length} topic sections from CSV`);
-
-        // Debug: Log sections by topic
-        const sectionsByTopic = {};
-        topicSections.forEach(section => {
-            if (!sectionsByTopic[section.topic_id]) {
-                sectionsByTopic[section.topic_id] = [];
-            }
-            sectionsByTopic[section.topic_id].push(section);
-        });
-        console.log('[unifiedDataService] Sections by topic:', sectionsByTopic);
+        Logger.data(`CSV Load Summary`, {
+            quizQuestions: quizQuestions.length,
+            studyContent: studyContent.length,
+            topicSections: topicSections.length
+        }, CONTEXT);
 
         // Return data in Excel-compatible format
         return {
@@ -224,8 +209,7 @@ async function loadFromCSV() {
         };
     }
     catch (error) {
-        console.error('❌ [unifiedDataService] loadAppData FAILED with error:', error);
-        console.error('❌ [unifiedDataService] Error stack:', error.stack);
+        Logger.error('loadAppData FAILED', error, CONTEXT);
         throw error; // Re-throw so fallback mechanism works
     }
 }
@@ -235,7 +219,7 @@ async function loadFromCSV() {
  * @returns {Promise<Object>} Application data
  */
 async function loadFromExcel() {
-    log('Loading from Excel files...');
+    Logger.info('Loading from Excel files...', null, CONTEXT);
     const data = await fetchLocalExcelData();
     return {
         ...data,
@@ -288,18 +272,18 @@ export function validateData(data) {
 
     if (missingKeys.length > 0) {
         const msg = `Data validation failed: Missing keys ${missingKeys.join(', ')}`;
-        Logger.gate('Data Validation', false);
+        Logger.gate('Data Validation', false, CONTEXT);
         throw new Error(msg);
     }
 
     // Check if subjects exist
     if (!data.SUBJECTS || data.SUBJECTS.length === 0) {
         const msg = 'Data validation failed: No subjects loaded';
-        Logger.gate('Data Validation', false);
+        Logger.gate('Data Validation', false, CONTEXT);
         throw new Error(msg);
     }
 
-    Logger.gate('Data Validation', true);
+    Logger.gate('Data Validation', true, CONTEXT);
     return true;
 }
 

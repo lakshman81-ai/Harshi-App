@@ -354,19 +354,9 @@ const SettingsPanel = ({ onClose }) => {
                 </div>
 
                 {/* Footer with Version */}
-                <div className={cn("px-6 py-3 border-t flex justify-end", darkMode ? "border-slate-800 bg-slate-900/50" : "border-slate-100 bg-slate-50/50")}>
-                    <span className={cn("text-xs", darkMode ? "text-slate-600" : "text-slate-400")}>
-                        ver.07-02-26 14:09
-                    </span>
-                </div>
-
-                {/* Version Info */}
-                <div className="px-6 pb-4 flex justify-end">
-                    <span className={cn(
-                        "text-xs",
-                        darkMode ? "text-slate-500" : "text-slate-400"
-                    )}>
-                        ver.07-02-26 17:36
+                <div className={cn("px-6 py-3 border-t flex justify-end items-center gap-2", darkMode ? "border-slate-800 bg-slate-900/50" : "border-slate-100 bg-slate-50/50")}>
+                    <span className={cn("text-xs font-mono", darkMode ? "text-slate-600" : "text-slate-400")}>
+                        ver.23-05-24 12.30
                     </span>
                 </div>
             </div>
