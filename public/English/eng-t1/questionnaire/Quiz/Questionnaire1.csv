@@ -1,0 +1,4 @@
+question_id,question_text,option_a,option_b,option_c,option_d,correct_answer,explanation,hint,difficulty,xp_reward
+q1,Identify the tense: 'I will go to the market.',Present Simple,Past Continuous,Future Simple,Present Perfect,C,Will + Base form indicates Future Simple.,Look for 'will'.,easy,10
+q2,Which sentence is in Past Continuous?,I was running.,I ran.,I run.,I will run.,A,Was/Were + ing form.,Ongoing in past.,medium,10
+q3,Correct the sentence: 'She come here everyday.',She comes here everyday.,She came here everyday.,She coming here everyday.,She comed here everyday.,A,Subject-Verb Agreement: He/She/It takes 's'.,Third person singular.,easy,10

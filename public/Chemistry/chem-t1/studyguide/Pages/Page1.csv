@@ -1,9 +1,9 @@
 section_id,content_type,content_title,content_text,explanation,common_misconception,correction,image_url,video_url,order_index
-intro-chem-t1-1,introduction,The Atom,"Atoms are the basic building blocks of matter. Everything in the universe is made of atoms.",,,,1
+intro-chem-t1-1,introduction,The Atom,"Atoms are the basic building blocks of matter. Everything in the universe is made of atoms.",,,,,,1
 table-chem-t1-1,table,Subatomic Particles,"Particle|Charge|Location
 Proton|+1|Nucleus
 Neutron|0|Nucleus
-Electron|-1|Electron Cloud",,,,2
+Electron|-1|Electron Cloud",,,,,,2
 img-chem-t1-1,image,Bohr Model,A simplified representation of an atom.,,,,https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Bohr-atom-PAR.svg/310px-Bohr-atom-PAR.svg.png,,3
 flow-chem-t1-1,mermaid,Scientific Method,"graph TD
     A[Observation] --> B[Question]
@@ -12,5 +12,5 @@ flow-chem-t1-1,mermaid,Scientific Method,"graph TD
     D --> E{Analyze Data}
     E -- Supports Hypothesis --> F[Conclusion]
     E -- Rejects Hypothesis --> G[Refine Hypothesis]
-    G --> D",,,,4
+    G --> D",,,,,,4
 eqn-chem-t1-1,formula,Water Formation,2H_2 + O_2 \rightarrow 2H_2O,,,,,,5

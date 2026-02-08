@@ -206,6 +206,32 @@ export async function loadHandoutPage(subject, topicFolder, filename) {
     return fetchCSV(path);
 }
 
+/**
+ * NEW: Load Daily Challenges
+ */
+export async function loadDailyChallenges() {
+    const path = '/data/daily_challenges.csv';
+    const data = await fetchCSV(path);
+    return data.map(row => ({
+        id: row.id,
+        date: row.date,
+        subjectKey: row.subject_key,
+        difficulty: row.difficulty,
+        question: row.question,
+        options: parseOptionsLocal(row.options),
+        correctAnswer: row.correct_answer,
+        hint: row.hint,
+        explanation: row.explanation,
+        xpReward: parseInt(row.xp_reward, 10) || 10
+    }));
+}
+
+function parseOptionsLocal(optionsStr) {
+    if (!optionsStr) return [];
+    if (optionsStr.includes('|')) return optionsStr.split('|').map(o => ({ label: o, text: o }));
+    return optionsStr.split(',').map(o => ({ label: o, text: o }));
+}
+
 // Deprecated fallback method, kept for compatibility if needed
 export async function loadHandout(subject, topicFolder) {
     const path = `/Handout/${subject}/${topicFolder}/handout.csv`;

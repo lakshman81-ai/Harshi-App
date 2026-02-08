@@ -1,0 +1,16 @@
+section_id,content_type,content_title,content_text,explanation,common_misconception,correction,image_url,video_url,order_index
+intro-soc-t1-1,introduction,What are Resources?,"Everything available in our environment which can be used to satisfy our needs, provided, it is technologically accessible, economically feasible and culturally acceptable can be termed as 'Resource'.",,,,,,1
+table-soc-t1-1,table,Classification of Resources,"Basis|Types|Examples
+Origin|Biotic, Abiotic|Flora/Fauna, Rocks/Metals
+Exhaustibility|Renewable, Non-Renewable|Solar/Wind, Coal/Petroleum
+Ownership|Individual, Community, National, International|Plots/Houses, Parks, Roads, Oceans
+Status|Potential, Developed, Stock, Reserve|Wind(Gujarat), Coal Mines, Water(H2), Dams",,,,,,2
+flow-soc-t1-1,mermaid,Resource Planning,"graph TD
+    A[Identification and Inventory] --> B[Evolving Planning Structure]
+    B --> C[Matching with National Plans]
+    A --> D[Surveying and Mapping]
+    A --> E[Qualitative and Quantitative Estimation]
+    B --> F[Technology and Skill]
+    C --> G[Overall Development]",,,,,,3
+img-soc-t1-1,image,Sustainable Development,Sustainable economic development means 'development should take place without damaging the environment'.,,,,https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Sustainable_development.svg/1200px-Sustainable_development.svg.png,,4
+example-soc-t1-1,example,Conservation of Resources,"Gandhiji said: 'There is enough for everybody's need and not for any body's greed.'",,,,,,5

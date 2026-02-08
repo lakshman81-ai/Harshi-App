@@ -188,10 +188,20 @@ async function loadFromCSV() {
             }
         }
 
+        // Load Daily Challenges
+        let dailyChallenges = [];
+        try {
+            dailyChallenges = await csvService.loadDailyChallenges();
+            Logger.data(`Loaded ${dailyChallenges.length} daily challenges`, null, CONTEXT);
+        } catch (error) {
+            Logger.warn('Failed to load daily challenges', error, CONTEXT);
+        }
+
         Logger.data(`CSV Load Summary`, {
             quizQuestions: quizQuestions.length,
             studyContent: studyContent.length,
-            topicSections: topicSections.length
+            topicSections: topicSections.length,
+            dailyChallenges: dailyChallenges.length
         }, CONTEXT);
 
         // Return data in Excel-compatible format
@@ -206,7 +216,7 @@ async function loadFromCSV() {
             FORMULAS: [],
             ACHIEVEMENTS: [],
             APP_SETTINGS: [],
-            DAILY_CHALLENGES: [],
+            DAILY_CHALLENGES: dailyChallenges,
             _dataSource: 'csv'
         };
     }
