@@ -356,7 +356,7 @@ const SettingsPanel = ({ onClose }) => {
                 {/* Footer with Version */}
                 <div className={cn("px-6 py-3 border-t flex justify-end items-center gap-2", darkMode ? "border-slate-800 bg-slate-900/50" : "border-slate-100 bg-slate-50/50")}>
                     <span className={cn("text-xs font-mono", darkMode ? "text-slate-600" : "text-slate-400")}>
-                        ver.27-05-25 time 10.00
+                        ver.28-05-25 time 14.30
                     </span>
                 </div>
             </div>

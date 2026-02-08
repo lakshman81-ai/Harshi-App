@@ -11,6 +11,7 @@ import MathFormula from './MathFormula';
 import { selectQuestions } from '../utils/AdaptiveEngine';
 import GraphExplorer from './interactive/GraphExplorer';
 import InteractiveSVG from './interactive/InteractiveSVG';
+import MermaidDiagram from './MermaidDiagram';
 
 const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) => {
     const { progress, subjects, sections, objectives, keyTerms, studyContent, formulas, quizQuestions, updateProgress, settings } = useStudy();
@@ -566,6 +567,45 @@ const TopicStudyView = memo(({ subject, topicIndex, onBack, onOpenSettings }) =>
                                                             <div className={cn("text-sm font-mono p-4 rounded-xl", darkMode ? "bg-slate-900 text-amber-300" : "bg-white text-amber-800 border border-amber-100")}>
                                                                 {content.text}
                                                             </div>
+                                                        </div>
+                                                    )}
+
+                                                    {content.type === 'mermaid' && (
+                                                        <div className="mb-6">
+                                                            <div className={cn("rounded-2xl p-4 overflow-x-auto", darkMode ? "bg-slate-800" : "bg-white border")}>
+                                                                <MermaidDiagram chart={content.text} />
+                                                            </div>
+                                                            {content.title && (
+                                                                <p className={cn("text-sm text-center italic mt-2", darkMode ? "text-slate-400" : "text-slate-500")}>{content.title}</p>
+                                                            )}
+                                                        </div>
+                                                    )}
+
+                                                    {content.type === 'table' && (
+                                                        <div className="mb-6 overflow-x-auto">
+                                                            <div className={cn("rounded-xl border overflow-hidden", darkMode ? "border-slate-700" : "border-slate-200")}>
+                                                                <table className={cn("w-full text-sm", darkMode ? "text-slate-300" : "text-slate-700")}>
+                                                                    <thead>
+                                                                        <tr className={darkMode ? "bg-slate-800 text-slate-200" : "bg-slate-100 text-slate-700"}>
+                                                                            {content.text.split('\n')[0].split('|').map((h, i) => (
+                                                                                <th key={i} className={cn("p-3 text-left font-bold border-b", darkMode ? "border-slate-700" : "border-slate-200")}>{h.trim()}</th>
+                                                                            ))}
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        {content.text.split('\n').slice(1).filter(line => line.trim()).map((row, i) => (
+                                                                            <tr key={i} className={cn("border-b last:border-0", darkMode ? "border-slate-800 hover:bg-slate-800/50" : "border-slate-100 hover:bg-slate-50")}>
+                                                                                {row.split('|').map((c, j) => (
+                                                                                    <td key={j} className="p-3 align-top">{c.trim()}</td>
+                                                                                ))}
+                                                                            </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            {content.title && (
+                                                                <p className={cn("text-sm text-center italic mt-2", darkMode ? "text-slate-400" : "text-slate-500")}>{content.title}</p>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>
