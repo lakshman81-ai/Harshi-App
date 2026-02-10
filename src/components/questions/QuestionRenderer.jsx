@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import TrueFalseQuestion from './TrueFalseQuestion';
 import FillBlankQuestion from './FillBlankQuestion';
 import MatchingQuestion from './MatchingQuestion';
+import ContentRenderer from '../common/ContentRenderer';
 
 /**
  * @typedef {Object} Question
@@ -123,7 +124,12 @@ const MCQInline = ({ question, onAnswer, showHint, darkMode, disabled, subjectCo
 
     return (
         <div className={`space-y-3 ${darkMode ? 'text-white' : 'text-slate-800'}`}>
-            <p className="font-medium text-lg">{question.text || question.question}</p>
+            <div className="mb-4">
+                <ContentRenderer
+                    content={question.text || question.question}
+                    className="font-medium text-lg"
+                />
+            </div>
             {showHint && question.hint && (
                 <p className="text-sm text-amber-600 dark:text-amber-400 flex items-center gap-1">
                     <span>💡</span>

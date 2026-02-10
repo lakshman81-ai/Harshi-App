@@ -85,7 +85,7 @@ const HandoutInline = ({ subject, topic, objectives, terms, formulas, sections, 
                                 <p className={cn("text-lg sm:text-xl font-serif italic", darkMode ? "text-slate-400" : "text-slate-600")}>{subject.name} Study Guide</p>
                             </div>
                             <div className="text-right hidden sm:block">
-                                <div className={cn("text-sm", darkMode ? "text-slate-500" : "text-slate-400")}>Topic ID</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">Topic ID</div>
                                 <div className={cn("font-mono font-bold", darkMode ? "text-slate-400" : "text-slate-600")}>{topic.id}</div>
                             </div>
                         </div>
@@ -198,7 +198,7 @@ const HandoutInline = ({ subject, topic, objectives, terms, formulas, sections, 
                                     <div className="space-y-4">
                                         {formulas.map((f, i) => (
                                             <div key={i} className="text-center">
-                                                <div className={cn("text-xs mb-1", darkMode ? "text-slate-400" : "text-slate-400")}>{f.label}</div>
+                                                <div className="text-xs mb-1 text-slate-500 dark:text-slate-400">{f.label}</div>
                                                 <div className={cn("rounded p-2", darkMode ? "bg-slate-700" : "bg-white/10")}>
                                                     <MathFormula formula={f.formula || f.text} size="medium" />
                                                 </div>

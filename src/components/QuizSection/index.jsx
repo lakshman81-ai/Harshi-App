@@ -6,6 +6,7 @@ import { soundManager } from '../../utils/SoundManager';
 import { explainMisconception } from '../../services/geminiService';
 import { useStudy } from '../../contexts/StudyContext';
 import QuestionRenderer from '../questions/QuestionRenderer';
+import ContentRenderer from '../common/ContentRenderer';
 
 const cn = (...classes) => classes.flat().filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
 
@@ -115,6 +116,13 @@ const QuizSection = memo(({
   const [difficultyFilter, setDifficultyFilter] = useState('all'); // 'all' | 'easy' | 'medium' | 'hard'
   const [durations, setDurations] = useState({}); // { questionId: seconds }
   const [aiExplanation, setAiExplanation] = useState({ loading: false, text: null }); // AI Explanation State
+
+  // ADAPTIVE LEARNING STATE
+  const [attempts, setAttempts] = useState({}); // { questionId: count }
+  const [consecutiveCorrect, setConsecutiveCorrect] = useState(0);
+  const [feedbackMessage, setFeedbackMessage] = useState(null);
+  const consecutiveCorrectRef = useRef(0); // Ref for sync logic
+
   const startTimeRef = useRef(Date.now());
   const { settings } = useStudy();
 
@@ -151,9 +159,10 @@ const QuizSection = memo(({
   // Ref to hold latest handleSubmit to avoid stale closure in timer effect
   const handleSubmitRef = useRef(null);
 
-  // Reset timer on question change
+  // Reset timer and feedback on question change
   useEffect(() => {
     startTimeRef.current = Date.now();
+    setFeedbackMessage(null);
   }, [currentIndex, phase]);
 
   // Timer effect - uses ref to avoid stale closure issue
@@ -218,33 +227,83 @@ const QuizSection = memo(({
     }));
   }, [phase, currentQuestion]);
 
-  // Use hint
-  const handleUseHint = () => {
+  // Use hint (supports forced reveal for adaptive learning)
+  const handleUseHint = (force = false) => {
     if (!allowHints || !currentQuestion?.hint) return;
     if (hintsUsed[currentQuestion.id]) return;
-    if (userXp < hintCost) return;
 
-    onUseHint?.(hintCost);
+    if (!force) {
+        if (userXp < hintCost) return;
+        onUseHint?.(hintCost);
+    }
+
     setHintsUsed(prev => ({
       ...prev,
       [currentQuestion.id]: true
     }));
   };
 
-  // Go to next question or review
+  // Go to next question or review (Modified for Adaptive Logic)
   const handleNext = () => {
     if (!hasAnswered) return;
 
-    // Play sound (WI-301)
     const selectedAnswer = answers[currentQuestion.id];
-    const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+    const isCorrect = isAnswerCorrect(currentQuestion, selectedAnswer);
+    const currentAttempts = attempts[currentQuestion.id] || 0;
+
     if (isCorrect) {
       soundManager.playCorrect();
+
+      // FLOW STATE (L-01): Auto-increment difficulty after 5 correct
+      consecutiveCorrectRef.current += 1;
+      setConsecutiveCorrect(consecutiveCorrectRef.current);
+
+      if (consecutiveCorrectRef.current >= 5) {
+          let nextDiff = null;
+          if (difficultyFilter === 'easy') nextDiff = 'medium';
+          else if (difficultyFilter === 'medium') nextDiff = 'hard';
+
+          if (nextDiff) {
+              setDifficultyFilter(nextDiff);
+              setCurrentIndex(0);
+              setAnswers({});
+              setHintsUsed({});
+              setAttempts({});
+              setFeedbackMessage(`Level Up! 🚀 Starting ${nextDiff} questions.`);
+
+              consecutiveCorrectRef.current = 0;
+              setConsecutiveCorrect(0);
+              return; // Skip review, start new level
+          }
+          // Reset if maxed out (hard)
+          consecutiveCorrectRef.current = 0;
+          setConsecutiveCorrect(0);
+      }
+
+      setPhase('review');
     } else {
       soundManager.playIncorrect();
-    }
+      consecutiveCorrectRef.current = 0;
+      setConsecutiveCorrect(0);
 
-    setPhase('review');
+      // STRUGGLE DETECT (L-02): Allow retries and force hint
+      const newAttempts = currentAttempts + 1;
+      setAttempts(prev => ({...prev, [currentQuestion.id]: newAttempts}));
+
+      if (newAttempts === 1) {
+          // First fail: Encourage retry
+          setFeedbackMessage("Incorrect. Try again!");
+          return;
+      } else if (newAttempts === 2) {
+          // Second fail: Auto-reveal hint
+          setFeedbackMessage("Let's look at a hint to help you.");
+          handleUseHint(true); // Force hint reveal
+          return;
+      }
+
+      // 3rd fail: Give up and go to review
+      setPhase('review');
+    }
   };
 
   // Continue from review
@@ -620,6 +679,14 @@ const QuizSection = memo(({
               Question {currentIndex + 1} of {filteredQuestions.length}
             </span>
             <DifficultyBadge difficulty={questionDifficulty} darkMode={darkMode} small />
+            {consecutiveCorrect >= 3 && (
+              <span className={cn(
+                "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold animate-bounce",
+                darkMode ? "bg-orange-900/30 text-orange-400" : "bg-orange-100 text-orange-600"
+              )}>
+                🔥 Streak: {consecutiveCorrect}
+              </span>
+            )}
             {currentQuestion.isAIGenerated && (
               <span className={cn(
                 "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs",
@@ -686,15 +753,6 @@ const QuizSection = memo(({
               />
             </div>
           )}
-
-          <p
-            className={cn(
-              "text-lg font-medium mb-6",
-              darkMode ? "text-white" : "text-slate-800"
-            )}
-          >
-            {currentQuestion.question}
-          </p>
 
           {/* Question Progress Indicators */}
           <div className="flex gap-1 flex-wrap mb-4" role="navigation" aria-label="Question navigation">
@@ -771,41 +829,52 @@ const QuizSection = memo(({
           )}
         </div>
 
-        {/* Navigation */}
-        <div className="flex justify-between">
-          <button
-            onClick={handlePrevious}
-            disabled={currentIndex === 0}
-            className={cn(
-              "flex items-center gap-2 px-6 py-3 rounded-xl font-medium",
-              currentIndex === 0
-                ? darkMode
-                  ? "bg-slate-700 text-slate-500 cursor-not-allowed"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                : darkMode
-                  ? "bg-slate-700 hover:bg-slate-600 text-white"
-                  : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+        {/* Navigation & Feedback */}
+        <div className="flex flex-col gap-4">
+            {feedbackMessage && (
+                <div className={cn(
+                    "p-3 rounded-lg text-center font-medium animate-pulse",
+                    darkMode ? "bg-amber-900/30 text-amber-200" : "bg-amber-50 text-amber-800"
+                )}>
+                    {feedbackMessage}
+                </div>
             )}
-          >
-            <ChevronLeft className="w-5 h-5" />
-            Previous
-          </button>
 
-          <button
-            onClick={handleNext}
-            disabled={!hasAnswered}
-            className={cn(
-              "flex items-center gap-2 px-6 py-3 rounded-xl font-medium",
-              !hasAnswered
-                ? darkMode
-                  ? "bg-slate-700 text-slate-500 cursor-not-allowed"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                : cn(`bg-gradient-to-r text-white`, subjectConfig.gradient)
-            )}
-          >
-            {isLastQuestion ? 'Submit Quiz' : 'Next'}
-            <ChevronRight className="w-5 h-5" />
-          </button>
+            <div className="flex justify-between">
+            <button
+                onClick={handlePrevious}
+                disabled={currentIndex === 0}
+                className={cn(
+                "flex items-center gap-2 px-6 py-3 rounded-xl font-medium",
+                currentIndex === 0
+                    ? darkMode
+                    ? "bg-slate-700 text-slate-500 cursor-not-allowed"
+                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    : darkMode
+                    ? "bg-slate-700 hover:bg-slate-600 text-white"
+                    : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                )}
+            >
+                <ChevronLeft className="w-5 h-5" />
+                Previous
+            </button>
+
+            <button
+                onClick={handleNext}
+                disabled={!hasAnswered}
+                className={cn(
+                "flex items-center gap-2 px-6 py-3 rounded-xl font-medium",
+                !hasAnswered
+                    ? darkMode
+                    ? "bg-slate-700 text-slate-500 cursor-not-allowed"
+                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                    : cn(`bg-gradient-to-r text-white`, subjectConfig.gradient)
+                )}
+            >
+                {isLastQuestion ? 'Submit Quiz' : 'Next'}
+                <ChevronRight className="w-5 h-5" />
+            </button>
+            </div>
         </div>
       </div>
     );
@@ -854,14 +923,10 @@ const QuizSection = memo(({
           )}
         </div>
 
-        <p
-          className={cn(
-            "mb-6",
-            darkMode ? "text-slate-300" : "text-slate-600"
-          )}
-        >
-          {currentQuestion.explanation}
-        </p>
+        <ContentRenderer
+            content={currentQuestion.explanation}
+            className="mb-6"
+        />
 
         {/* AI Explanation Section */}
         {!isCorrect && (
@@ -1075,10 +1140,13 @@ QuizSection.propTypes = {
   questions: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     question: PropTypes.string.isRequired,
-    options: PropTypes.arrayOf(PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      text: PropTypes.string.isRequired,
-    })).isRequired,
+    options: PropTypes.arrayOf(PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+      })
+    ])).isRequired,
     correctAnswer: PropTypes.string.isRequired,
     difficulty: PropTypes.oneOf(['easy', 'medium', 'hard']),
     hint: PropTypes.string,

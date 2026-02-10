@@ -8,7 +8,48 @@ import csvService from './csvService';
 import { fetchLocalExcelData } from './excelService';
 import { Logger } from './Logger';
 
-export { csvService };
+// Wrap csvService for Benchmark Mode interception
+const wrappedCsvService = {
+    ...csvService,
+    listQuizzes: async (subject, topic) => {
+        if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('benchmark') === 'true') {
+            Logger.info(`[Benchmark] Listing quizzes for ${topic}`, null, CONTEXT);
+            // Return benchmark quizzes based on topic folder (which matches our benchmark data topics)
+            if (topic === 'flow') return [{ id: 'flow-quiz', name: 'Flow State Quiz', file: 'flow.csv' }];
+            if (topic === 'struggle') return [{ id: 'struggle-quiz', name: 'Struggle Detect Quiz', file: 'struggle.csv' }];
+            if (topic === 'render') return [{ id: 'render-quiz', name: 'Content Rendering Quiz', file: 'render.csv' }];
+        }
+        return csvService.listQuizzes(subject, topic);
+    },
+    loadQuiz: async (subject, topic, file) => {
+        if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('benchmark') === 'true') {
+            const { BENCHMARK_DATA } = await import('../data/benchmark_data');
+
+            // Map topic folder to benchmark topic_id
+            let topicId = '';
+            if (topic === 'flow') topicId = 'flow-test';
+            if (topic === 'struggle') topicId = 'struggle-test';
+            if (topic === 'render') topicId = 'render-test';
+
+            return BENCHMARK_DATA.QUIZ_QUESTIONS.filter(q => q.topic_id === topicId).map(q => ({
+                question_id: q.id,
+                question_text: q.question,
+                option_a: q.options[0],
+                option_b: q.options[1],
+                option_c: q.options[2],
+                option_d: q.options[3],
+                correct_answer: q.correctAnswer,
+                difficulty: q.difficulty,
+                hint: q.hint,
+                explanation: q.explanation,
+                xp_reward: q.xpReward
+            }));
+        }
+        return csvService.loadQuiz(subject, topic, file);
+    }
+};
+
+export { wrappedCsvService as csvService };
 
 // Configuration: Set data source priority 
 // 'csv-first' = Try CSV first, fallback to Excel
@@ -22,6 +63,27 @@ const CONTEXT = 'UnifiedDataService';
  */
 export async function loadAppData() {
     Logger.info('Starting data load process', { mode: DATA_SOURCE_MODE }, CONTEXT);
+
+    // BENCHMARK MODE CHECK
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('benchmark') === 'true') {
+        Logger.info('⚠️ BENCHMARK MODE ACTIVATED ⚠️', null, CONTEXT);
+        try {
+            const { BENCHMARK_DATA } = await import('../data/benchmark_data');
+
+            // Ensure topics have topics array structure for subject matching
+            const subjects = BENCHMARK_DATA.SUBJECTS.map(s => ({
+                ...s,
+                topics: BENCHMARK_DATA.TOPICS.filter(t => t.subject_key === s.subject_key)
+            }));
+
+            return {
+                ...BENCHMARK_DATA,
+                SUBJECTS: subjects
+            };
+        } catch (e) {
+            Logger.error('Failed to load benchmark data', e, CONTEXT);
+        }
+    }
 
     if (DATA_SOURCE_MODE === 'csv-first') {
         try {

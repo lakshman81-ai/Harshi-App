@@ -213,7 +213,7 @@ const SubjectOverview = memo(({ subject, onBack, onSelectTopic, onOpenSettings }
                             </p>
                             {searchResults.matches.length > 0 && (
                                 <div className="flex items-center gap-2 text-xs">
-                                    <span className={darkMode ? "text-slate-500" : "text-slate-400"}>Searched:</span>
+                                    <span className="text-slate-500 dark:text-slate-400">Searched:</span>
                                     <span className={cn("px-2 py-0.5 rounded-full", darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600")}>Topics</span>
                                     <span className={cn("px-2 py-0.5 rounded-full", darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600")}>Content</span>
                                     <span className={cn("px-2 py-0.5 rounded-full", darkMode ? "bg-slate-700 text-slate-300" : "bg-slate-200 text-slate-600")}>Terms</span>
@@ -278,7 +278,7 @@ const SubjectOverview = memo(({ subject, onBack, onSelectTopic, onOpenSettings }
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <h3 className={cn("font-bold mb-1", darkMode ? "text-white" : "text-slate-800")}>{topic.name}</h3>
-                                            <div className={cn("flex items-center gap-4 text-sm flex-wrap", darkMode ? "text-slate-400" : "text-slate-500")}>
+                                            <div className="flex items-center gap-4 text-sm flex-wrap text-slate-600 dark:text-slate-400">
                                                 <span className="flex items-center gap-1"><Clock className="w-4 h-4" />{topic.duration} min</span>
                                                 {topicProgress > 0 && topicProgress < 100 && <span style={{ color: config.color }}>{topicProgress}% complete</span>}
                                                 {topicProgress === 100 && <span className="text-emerald-600 font-medium flex items-center gap-1"><Check className="w-4 h-4" />Completed</span>}
@@ -303,7 +303,7 @@ const SubjectOverview = memo(({ subject, onBack, onSelectTopic, onOpenSettings }
                                                         );
                                                     })}
                                                     {matchInfo.matchDetails.length > 3 && (
-                                                        <div className={cn("text-xs", darkMode ? "text-slate-500" : "text-slate-400")}>
+                                                        <div className="text-xs text-slate-500 dark:text-slate-400">
                                                             +{matchInfo.matchDetails.length - 3} more matches
                                                         </div>
                                                     )}

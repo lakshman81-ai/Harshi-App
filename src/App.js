@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import Grade8StudyHub from './Grade8_StudyHub_Complete';
 import { Logger } from './services/Logger';
 import './App.css';
@@ -11,7 +12,9 @@ function App() {
 
   return (
     <div className="App">
-      <Grade8StudyHub />
+      <BrowserRouter basename="/Harshi-App">
+        <Grade8StudyHub />
+      </BrowserRouter>
     </div>
   );
 }
