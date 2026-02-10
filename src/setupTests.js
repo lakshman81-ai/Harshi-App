@@ -41,3 +41,17 @@ jest.mock('function-plot', () => {
         })
     };
 });
+
+// Mock react-markdown and plugins (ESM modules causing Jest issues)
+jest.mock('react-markdown', () => ({ children }) => <div data-testid="markdown">{children}</div>);
+jest.mock('remark-math', () => () => {});
+jest.mock('rehype-katex', () => () => {});
+
+// Mock react-player (ESM module causing Jest issues)
+jest.mock('react-player', () => ({ url }) => <div data-testid="player" data-url={url} />);
+
+// Mock mermaid (ESM module causing Jest issues)
+jest.mock('mermaid', () => ({
+    initialize: jest.fn(),
+    render: jest.fn().mockResolvedValue({ svg: '<svg></svg>' })
+}));
