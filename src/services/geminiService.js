@@ -99,3 +99,67 @@ export const explainMisconception = async (apiKey, question, wrongAnswer, correc
     // 2. Fallback to DuckDuckGo/Static
     return await getFallbackExplanation({ question, wrongAnswer, correctAnswer });
 };
+
+/**
+ * Summarizes educational content using Gemini
+ * @param {string} apiKey - Gemini API Key
+ * @param {string} text - Content to summarize
+ * @returns {Promise<string|null>} - Summary text or null on failure
+ */
+export const summarizeContent = async (apiKey, text) => {
+    if (!apiKey || !text) {
+        Logger.warn('Missing API Key or Text for summarization');
+        return null;
+    }
+
+    try {
+        // Limit text length to avoid token limits (approx 10k chars is safe for flash model)
+        const safeText = text.substring(0, 12000);
+
+        const prompt = `
+        Context: Grade 8 Student Study Guide.
+        Content: "${safeText}"
+
+        Task: Summarize the above content.
+        Format:
+        ### Key Concepts
+        * [Concept 1]
+        * [Concept 2]
+        * [Concept 3]
+
+        ### Simple Explanation
+        [1-2 clear paragraphs]
+
+        ### Real-World Example
+        [1 short paragraph application]
+
+        Tone: Educational, engaging, clear. Use Markdown formatting.
+        `;
+
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }]
+                })
+            }
+        );
+
+        if (response.ok) {
+            const data = await response.json();
+            const summary = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (summary) {
+                Logger.info('Gemini Summary Generated');
+                return summary;
+            }
+        } else {
+             Logger.warn('Gemini Summary API Error', { status: response.status });
+        }
+    } catch (error) {
+        Logger.error('Gemini Summary Failed', error);
+    }
+
+    return null;
+};
