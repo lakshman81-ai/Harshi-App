@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Brain } from 'lucide-react';
 import { cn } from '../../utils';
 import PropTypes from 'prop-types';
+import { useStudy } from '../../contexts/StudyContext';
+import { summarizeContent } from '../../services/geminiService';
+import SummaryModal from '../common/SummaryModal';
 
 /**
  * SummarizeButton Component
@@ -13,7 +16,14 @@ import PropTypes from 'prop-types';
  * @param {boolean} props.darkMode - Dark mode flag
  */
 const SummarizeButton = ({ sectionTitle, sectionContent, darkMode }) => {
+    const { settings } = useStudy();
     const [showToast, setShowToast] = useState(false);
+
+    // Modal State
+    const [modalOpen, setModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [summary, setSummary] = useState('');
+    const [error, setError] = useState(null);
 
     const handleSummarize = async () => {
         // Extract text from content blocks
@@ -31,7 +41,30 @@ const SummarizeButton = ({ sectionTitle, sectionContent, darkMode }) => {
             });
         }
 
-        // Build AI-ready prompt
+        // Check for Gemini API Key first
+        if (settings?.geminiApiKey) {
+            setModalOpen(true);
+            setIsLoading(true);
+            setError(null);
+            setSummary('');
+
+            try {
+                const result = await summarizeContent(settings.geminiApiKey, contentText);
+                if (result) {
+                    setSummary(result);
+                } else {
+                    setError('Failed to generate summary. Please check your API key or try again.');
+                }
+            } catch (err) {
+                console.error(err);
+                setError('An error occurred while generating summary.');
+            } finally {
+                setIsLoading(false);
+            }
+            return;
+        }
+
+        // Fallback: Perplexity (No Key)
         const prompt = `Please summarize the following educational content for a Grade 8 student:\n\n${contentText}\n\nProvide:\n1. Key concepts (3-5 bullet points)\n2. Simple explanation\n3. Real-world example`;
 
         try {
@@ -78,13 +111,23 @@ const SummarizeButton = ({ sectionTitle, sectionContent, darkMode }) => {
                         ? "bg-purple-500/10 text-purple-400 border-purple-500/50 hover:bg-purple-500/20"
                         : "bg-purple-100 text-purple-800 border-purple-200 hover:bg-purple-200"
                 )}
-                title="Copy & Open AI Tool"
+                title={settings?.geminiApiKey ? "Generate AI Summary" : "Copy & Open AI Tool"}
             >
                 <Brain className="w-4 h-4" />
                 <span>Summarize</span>
             </button>
 
-            {/* Toast Notification */}
+            {/* AI Summary Modal */}
+            <SummaryModal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                isLoading={isLoading}
+                content={summary}
+                error={error}
+                darkMode={darkMode}
+            />
+
+            {/* Toast Notification (Fallback only) */}
             {showToast && (
                 <div className={cn(
                     "fixed top-20 right-4 z-50 px-4 py-3 rounded-lg shadow-lg animate-slide-up",
